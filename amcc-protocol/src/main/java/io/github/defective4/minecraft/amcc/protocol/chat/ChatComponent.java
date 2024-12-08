@@ -15,8 +15,8 @@ public class ChatComponent {
     public static final ChatComponent EMPTY = new ChatComponent();
     private static final Gson PARSER = new Gson();
 
-    private transient ChatComponent[] extra;
-    private String text, color;
+    private transient ChatComponent[] extra, with;
+    private String text, color, translate;
 
     private ChatComponent() {
 
@@ -34,6 +34,10 @@ public class ChatComponent {
             list.addAll(el.flatten());
         }
         return Collections.unmodifiableList(list);
+    }
+
+    public List<ChatComponent> getArguments() {
+        return hasArguments() ? Collections.unmodifiableList(Arrays.asList(with)) : Collections.emptyList();
     }
 
     public Color getColor() {
@@ -55,13 +59,28 @@ public class ChatComponent {
         return text;
     }
 
+    public boolean hasArguments() {
+        return with != null && with.length > 0;
+    }
+
     public boolean hasExtra() {
         return extra != null && extra.length > 0;
     }
 
+    public boolean hasText() {
+        return text != null;
+    }
+
+    public boolean hasTranslate() {
+        return translate != null;
+    }
+
     public String toPlainString() {
         StringBuilder builder = new StringBuilder();
-        for (ChatComponent cpt : flatten()) if (cpt.text != null) builder.append(cpt.text);
+        for (ChatComponent cpt : flatten()) {
+            if (cpt.hasText()) builder.append(cpt.text);
+            if (cpt.hasTranslate()) builder.append(ChatTranslator.translate(cpt.translate, cpt.getArguments()));
+        }
         return builder.toString();
     }
 
@@ -69,6 +88,8 @@ public class ChatComponent {
         ChatComponent cpt = new ChatComponent();
         cpt.text = text;
         cpt.color = color;
+        cpt.translate = translate;
+        cpt.with = with;
         return cpt;
     }
 
@@ -90,6 +111,14 @@ public class ChatComponent {
                 ChatComponent[] parsedExtra = new ChatComponent[extras.size()];
                 for (int i = 0; i < parsedExtra.length; i++) parsedExtra[i] = ChatComponent.fromJson(extras.get(i));
                 cpt.extra = parsedExtra;
+            }
+
+            JsonElement with = obj.get("with");
+            if (with instanceof JsonArray) {
+                JsonArray extras = with.getAsJsonArray();
+                ChatComponent[] parsedWith = new ChatComponent[extras.size()];
+                for (int i = 0; i < parsedWith.length; i++) parsedWith[i] = ChatComponent.fromJson(extras.get(i));
+                cpt.with = parsedWith;
             }
 
             return cpt;
