@@ -1,5 +1,6 @@
 package io.github.defective4.minecraft.amcc.protocol.data;
 
+import java.util.Collections;
 import java.util.List;
 
 import com.google.gson.Gson;
@@ -28,9 +29,9 @@ public class StatusResponse {
 
     }
 
-    private static class Players {
-        private int online, max;
-        private List<PlayerSample> sample;
+    static class Players {
+        int online, max;
+        private final List<PlayerSample> sample = Collections.emptyList();
 
         @Override
         public String toString() {
@@ -39,9 +40,9 @@ public class StatusResponse {
 
     }
 
-    private static class Version {
-        private String name;
-        private int protocol;
+    static class Version {
+        String name;
+        int protocol;
 
         @Override
         public String toString() {
@@ -50,12 +51,12 @@ public class StatusResponse {
 
     }
 
-    private transient ChatComponent description = ChatComponent.EMPTY;
+    transient ChatComponent description = ChatComponent.EMPTY;
+    Players players = new Players();
+    Version version = new Version();
     private String favicon; // TODO
-    private final Players players = new Players();
-    private final Version version = new Version();
 
-    private StatusResponse() {}
+    protected StatusResponse() {}
 
     public ChatComponent getDescription() {
         return description;
@@ -81,10 +82,14 @@ public class StatusResponse {
         return version.name;
     }
 
+    public boolean isLegacy() {
+        return this instanceof LegacyStatusResponse;
+    }
+
     @Override
     public String toString() {
-        return "StatusResponse [players=" + players + ", version=" + version + ", description=" + getDescription()
-                + "]";
+        return "StatusResponse [players=" + players + ", version=" + version + ", description="
+                + getDescription().toPlainString() + "]";
     }
 
     public static StatusResponse fromJson(String json) {
