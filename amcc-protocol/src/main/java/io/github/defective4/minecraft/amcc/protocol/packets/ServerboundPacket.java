@@ -4,6 +4,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.DataOutput;
 import java.io.DataOutputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.UUID;
 
 import io.github.defective4.minecraft.amcc.protocol.data.DataTypes;
 
@@ -151,6 +152,11 @@ public class ServerboundPacket implements DataOutput {
         } catch (Exception e) {
             throw new IllegalStateException(e);
         }
+    }
+
+    public void writeUUID(UUID uuid) {
+        writeLong(uuid.getMostSignificantBits());
+        writeLong(uuid.getLeastSignificantBits());
     }
 
     public void writeVarInt(int value) {
