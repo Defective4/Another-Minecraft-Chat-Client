@@ -1,6 +1,7 @@
 package io.github.defective4.minecraft.amcc.protocol.chat;
 
 import java.awt.Color;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -23,6 +24,16 @@ public class ChatComponent {
 
     private ChatComponent(String text) {
         this.text = text;
+    }
+
+    public List<ChatComponent> flatten() {
+        List<ChatComponent> list = new ArrayList<>();
+        list.add(shallowClone());
+
+        if (hasExtra()) for (ChatComponent el : getExtra()) {
+            list.addAll(el.flatten());
+        }
+        return Collections.unmodifiableList(list);
     }
 
     public Color getColor() {
@@ -50,11 +61,15 @@ public class ChatComponent {
 
     public String toPlainString() {
         StringBuilder builder = new StringBuilder();
-        builder.append(toShallowString());
-        for (ChatComponent extra : getExtra()) {
-            builder.append(extra.toShallowString());
-        }
+        for (ChatComponent cpt : flatten()) if (cpt.text != null) builder.append(cpt.text);
         return builder.toString();
+    }
+
+    private ChatComponent shallowClone() {
+        ChatComponent cpt = new ChatComponent();
+        cpt.text = text;
+        cpt.color = color;
+        return cpt;
     }
 
     private String toShallowString() {
