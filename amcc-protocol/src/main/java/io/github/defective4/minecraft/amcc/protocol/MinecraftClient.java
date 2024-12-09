@@ -37,6 +37,10 @@ public class MinecraftClient implements AutoCloseable {
     private PlayerProfile serverSideProfile;
     private final Socket socket = new Socket();
 
+    protected ProtocolExecutor getExecutor() {
+        return executor;
+    }
+
     public MinecraftClient(String host, int port, PlayerProfile profile, ProtocolSet protocol) {
         listeners.add(new CoreEventHandler(this));
         this.host = host;
@@ -70,6 +74,7 @@ public class MinecraftClient implements AutoCloseable {
             int id = in.readByte();
             byte[] data = new byte[len - 1];
             in.readFully(data);
+            System.out.println(Integer.toHexString(id));
             try (DataInputStream wrapper = new DataInputStream(new ByteArrayInputStream(data))) {
                 PacketFactory<?> factory = protocol.getPacketRegistry().getPacket(currentGameState, id);
                 if (factory != null) {
@@ -114,6 +119,7 @@ public class MinecraftClient implements AutoCloseable {
 
     public void sendPacket(ServerboundPacket packet) throws IOException {
         if (!isConnected()) throw new IOException("Client not connected");
+        System.out.println(packet.getClass());
         out.write(packet.getData());
     }
 
