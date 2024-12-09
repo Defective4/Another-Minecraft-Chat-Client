@@ -37,10 +37,6 @@ public class MinecraftClient implements AutoCloseable {
     private PlayerProfile serverSideProfile;
     private final Socket socket = new Socket();
 
-    protected ProtocolExecutor getExecutor() {
-        return executor;
-    }
-
     public MinecraftClient(String host, int port, PlayerProfile profile, ProtocolSet protocol) {
         listeners.add(new CoreEventHandler(this));
         this.host = host;
@@ -93,6 +89,10 @@ public class MinecraftClient implements AutoCloseable {
         return clientSideProfile;
     }
 
+    public GameState getCurrentGameState() {
+        return currentGameState;
+    }
+
     public List<ClientEventListener> getListeners() {
         return Collections.unmodifiableList(listeners);
     }
@@ -119,8 +119,15 @@ public class MinecraftClient implements AutoCloseable {
 
     public void sendPacket(ServerboundPacket packet) throws IOException {
         if (!isConnected()) throw new IOException("Client not connected");
-        System.out.println(packet.getClass());
         out.write(packet.getData());
+    }
+
+    protected ProtocolExecutor getExecutor() {
+        return executor;
+    }
+
+    protected void setCurrentGameState(GameState currentGameState) {
+        this.currentGameState = currentGameState;
     }
 
     protected void setServerSideProfile(PlayerProfile serverSideProfile) {
