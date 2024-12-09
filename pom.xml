@@ -24,7 +24,7 @@
 	</build>
 	<modules>
 		<module>amcc-protocol</module>
-		<module>amcc-v767</module>
+		<module>amcc-protocol-impl</module>
 		<module>amcc-app</module>
 	</modules>
 </project>

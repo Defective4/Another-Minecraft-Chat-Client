@@ -7,12 +7,9 @@
 		<artifactId>amcc</artifactId>
 		<version>2.0</version>
 	</parent>
-	<artifactId>amcc-v767</artifactId>
-	<dependencies>
-		<dependency>
-			<groupId>io.github.defective4.minecraft</groupId>
-			<artifactId>amcc-protocol</artifactId>
-			<version>2.0</version>
-		</dependency>
-	</dependencies>
+	<artifactId>amcc-protocol-impl</artifactId>
+	<packaging>pom</packaging>
+	<modules>
+		<module>amcc-v767</module>
+	</modules>
 </project>
