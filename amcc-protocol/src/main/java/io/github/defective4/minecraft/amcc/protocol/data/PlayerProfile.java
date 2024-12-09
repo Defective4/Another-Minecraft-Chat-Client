@@ -20,6 +20,11 @@ public class PlayerProfile {
         return uuid;
     }
 
+    @Override
+    public String toString() {
+        return "PlayerProfile [name=" + name + ", uuid=" + uuid + "]";
+    }
+
     public static PlayerProfile createOfflineProfile(String name) {
         return new PlayerProfile(name,
                 UUID.nameUUIDFromBytes(("OfflinePlayer:" + name).getBytes(StandardCharsets.UTF_8)));

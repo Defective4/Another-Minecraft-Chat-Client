@@ -6,6 +6,9 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.net.Socket;
+import java.util.Collections;
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import io.github.defective4.minecraft.amcc.protocol.abstr.PacketFactory;
 import io.github.defective4.minecraft.amcc.protocol.abstr.ProtocolExecutor;
@@ -13,6 +16,8 @@ import io.github.defective4.minecraft.amcc.protocol.abstr.ProtocolSet;
 import io.github.defective4.minecraft.amcc.protocol.data.DataTypes;
 import io.github.defective4.minecraft.amcc.protocol.data.GameState;
 import io.github.defective4.minecraft.amcc.protocol.data.PlayerProfile;
+import io.github.defective4.minecraft.amcc.protocol.event.ClientEvent;
+import io.github.defective4.minecraft.amcc.protocol.event.ClientEventListener;
 import io.github.defective4.minecraft.amcc.protocol.packets.ClientboundPacket;
 import io.github.defective4.minecraft.amcc.protocol.packets.HandshakePacket;
 import io.github.defective4.minecraft.amcc.protocol.packets.ServerboundPacket;
@@ -25,6 +30,7 @@ public class MinecraftClient implements AutoCloseable {
     private final String host;
 
     private DataInputStream in;
+    private final List<ClientEventListener> listeners = new CopyOnWriteArrayList<>();
     private OutputStream out;
     private final int port;
     private final ProtocolSet protocol;
@@ -32,11 +38,16 @@ public class MinecraftClient implements AutoCloseable {
     private final Socket socket = new Socket();
 
     public MinecraftClient(String host, int port, PlayerProfile profile, ProtocolSet protocol) {
+        listeners.add(new CoreEventHandler(this));
         this.host = host;
         this.port = port;
         clientSideProfile = profile;
         this.protocol = protocol;
         executor = protocol.getExecutor();
+    }
+
+    public void addListener(ClientEventListener listener) {
+        listeners.add(listener);
     }
 
     @Override
@@ -69,11 +80,23 @@ public class MinecraftClient implements AutoCloseable {
         }
     }
 
+    public void dispatchEvent(ClientEvent event) {
+        listeners.forEach(ls -> ls.dispatchEvent(event));
+    }
+
     public PlayerProfile getClientProfile() {
         return clientSideProfile;
     }
 
+    public List<ClientEventListener> getListeners() {
+        return Collections.unmodifiableList(listeners);
+    }
+
     public PlayerProfile getServerProfile() {
+        return serverSideProfile;
+    }
+
+    public PlayerProfile getServerSideProfile() {
         return serverSideProfile;
     }
 
@@ -85,8 +108,16 @@ public class MinecraftClient implements AutoCloseable {
         return connected;
     }
 
+    public void removeListener(ClientEventListener listener) {
+        listeners.remove(listener);
+    }
+
     public void sendPacket(ServerboundPacket packet) throws IOException {
         if (!isConnected()) throw new IOException("Client not connected");
         out.write(packet.getData());
+    }
+
+    protected void setServerSideProfile(PlayerProfile serverSideProfile) {
+        this.serverSideProfile = serverSideProfile;
     }
 }
