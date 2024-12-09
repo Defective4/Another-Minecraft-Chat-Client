@@ -8,7 +8,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
-import io.github.defective4.minecraft.amcc.protocol.chat.ChatComponent;
+import io.github.defective4.minecraft.chatlib.chat.ChatComponent;
 
 public class StatusResponse {
     public static class PlayerSample {

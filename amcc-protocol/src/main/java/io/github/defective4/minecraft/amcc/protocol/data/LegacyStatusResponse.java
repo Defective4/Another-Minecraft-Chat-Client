@@ -2,7 +2,7 @@ package io.github.defective4.minecraft.amcc.protocol.data;
 
 import com.google.gson.JsonPrimitive;
 
-import io.github.defective4.minecraft.amcc.protocol.chat.ChatComponent;
+import io.github.defective4.minecraft.chatlib.chat.ChatComponent;
 
 public class LegacyStatusResponse extends StatusResponse {
     public LegacyStatusResponse(int protocol, String version, String description, int onlinePlayers, int maxPlayers) {
