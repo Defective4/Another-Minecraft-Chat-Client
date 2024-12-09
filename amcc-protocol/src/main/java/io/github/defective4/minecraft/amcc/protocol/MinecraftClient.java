@@ -63,6 +63,7 @@ public class MinecraftClient implements AutoCloseable {
                 PacketFactory<?> factory = protocol.getPacketRegistry().getPacket(currentGameState, id);
                 if (factory != null) {
                     ClientboundPacket packet = factory.decode(wrapper);
+                    protocol.getReceiver().receivePacket(packet, this);
                 }
             }
         }
