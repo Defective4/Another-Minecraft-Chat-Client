@@ -8,6 +8,7 @@ import java.net.Socket;
 
 import io.github.defective4.minecraft.amcc.protocol.abstr.ProtocolExecutor;
 import io.github.defective4.minecraft.amcc.protocol.abstr.ProtocolSet;
+import io.github.defective4.minecraft.amcc.protocol.data.DataTypes;
 import io.github.defective4.minecraft.amcc.protocol.data.PlayerProfile;
 import io.github.defective4.minecraft.amcc.protocol.packets.HandshakePacket;
 import io.github.defective4.minecraft.amcc.protocol.packets.ServerboundPacket;
@@ -46,6 +47,14 @@ public class MinecraftClient implements AutoCloseable {
 
         sendPacket(new HandshakePacket(protocol.getVersionNumber(), host, port, 2));
         sendPacket(executor.createLoginPacket(clientSideProfile));
+
+        while (!socket.isClosed()) {
+            int len = DataTypes.readVarInt(in);
+            int id = in.readByte();
+            byte[] data = new byte[len - 1];
+            in.readFully(data);
+
+        }
     }
 
     public PlayerProfile getClientProfile() {

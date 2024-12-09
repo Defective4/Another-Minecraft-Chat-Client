@@ -1,6 +1,6 @@
 package io.github.defective4.minecraft.amcc.protocol.data;
 
-import java.io.DataInputStream;
+import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -9,7 +9,7 @@ public class DataTypes {
     private static final int CONTINUE_BIT = 0x80;
     private static final int SEGMENT_BITS = 0x7F;
 
-    public static int readVarInt(DataInputStream is) throws IOException {
+    public static int readVarInt(DataInput is) throws IOException {
         int value = 0;
         int position = 0;
         byte currentByte;
@@ -23,7 +23,7 @@ public class DataTypes {
         return value;
     }
 
-    public static String readVarString(DataInputStream is) throws IOException {
+    public static String readVarString(DataInput is) throws IOException {
         byte[] data = new byte[readVarInt(is)];
         is.readFully(data);
         return new String(data, StandardCharsets.UTF_8);
