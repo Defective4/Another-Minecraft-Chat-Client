@@ -4,10 +4,15 @@ import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.UUID;
 
 public class DataTypes {
     private static final int CONTINUE_BIT = 0x80;
     private static final int SEGMENT_BITS = 0x7F;
+
+    public static UUID readUUID(DataInput in) throws IOException {
+        return new UUID(in.readLong(), in.readLong());
+    }
 
     public static int readVarInt(DataInput is) throws IOException {
         int value = 0;
