@@ -15,7 +15,7 @@ public class CoreEventHandler implements ClientEventListener {
 
     private final MinecraftClient client;
 
-    public CoreEventHandler(MinecraftClient client) {
+    protected CoreEventHandler(MinecraftClient client) {
         this.client = client;
     }
 
@@ -26,6 +26,7 @@ public class CoreEventHandler implements ClientEventListener {
 
     @EventHandler
     public void onConfigFinish(ConfigurationFinishEvent e) throws IOException {
+        client.setCurrentGameState(GameState.PLAY);
         client.getExecutor().acknowledgeConfigFinish(client);
     }
 
