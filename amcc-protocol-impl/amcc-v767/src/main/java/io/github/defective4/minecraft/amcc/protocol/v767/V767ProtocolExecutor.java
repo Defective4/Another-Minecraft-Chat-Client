@@ -9,6 +9,8 @@ import io.github.defective4.minecraft.amcc.protocol.packets.ServerboundPacket;
 import io.github.defective4.minecraft.amcc.protocol.v767.packets.client.config.ClientConfigFinishAckPacket;
 import io.github.defective4.minecraft.amcc.protocol.v767.packets.client.login.ClientLoginAcknowledgedPacket;
 import io.github.defective4.minecraft.amcc.protocol.v767.packets.client.login.ClientLoginStartPacket;
+import io.github.defective4.minecraft.amcc.protocol.v767.packets.client.play.ClientChatCommandPacket;
+import io.github.defective4.minecraft.amcc.protocol.v767.packets.client.play.ClientChatMessagePacket;
 import io.github.defective4.minecraft.amcc.protocol.v767.packets.client.play.ClientKeepAlivePacket;
 
 public class V767ProtocolExecutor implements ProtocolExecutor {
@@ -31,6 +33,15 @@ public class V767ProtocolExecutor implements ProtocolExecutor {
     @Override
     public void respondToKeepAlive(MinecraftClient client, long id) throws IOException {
         client.sendPacket(new ClientKeepAlivePacket(id));
+    }
+
+    @Override
+    public void sendChatMessage(MinecraftClient client, String message) throws IOException {
+        if (message.startsWith("/")) {
+            client.sendPacket(new ClientChatCommandPacket(message.substring(1)));
+        } else {
+            client.sendPacket(new ClientChatMessagePacket(message));
+        }
     }
 
 }

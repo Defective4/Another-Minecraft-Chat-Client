@@ -14,4 +14,6 @@ public interface ProtocolExecutor {
     ServerboundPacket createLoginPacket(PlayerProfile profile);
 
     void respondToKeepAlive(MinecraftClient client, long id) throws IOException;
+
+    void sendChatMessage(MinecraftClient client, String message) throws IOException;
 }

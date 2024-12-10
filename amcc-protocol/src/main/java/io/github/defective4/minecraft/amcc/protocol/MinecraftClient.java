@@ -152,6 +152,10 @@ public class MinecraftClient implements AutoCloseable {
         listeners.remove(listener);
     }
 
+    public void sendMessage(String message) throws IOException {
+        protocol.getExecutor().sendChatMessage(this, message);
+    }
+
     public void sendPacket(ServerboundPacket packet) throws IOException {
         if (!isConnected()) throw new IOException("Client not connected");
         out.write(packet.getData(compressionThreshold));
