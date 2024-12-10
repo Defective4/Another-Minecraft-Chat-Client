@@ -32,17 +32,19 @@ public class ServerPlayerChatMessagePacket extends ClientboundPacket {
         for (int i = 0; i < len; i++) in.readLong();
         readVarInt(in);
         Tag senderName = NBTParser.parse(in, false);
-        return new ServerPlayerChatMessagePacket(sender, message, senderName);
+        Tag targetName = in.readBoolean() ? NBTParser.parse(in, false) : null;
+        return new ServerPlayerChatMessagePacket(sender, message, senderName, targetName);
     };
 
     private final String message;
     private final UUID sender;
-    private final Tag senderName;
+    private final Tag senderName, targetName;
 
-    protected ServerPlayerChatMessagePacket(UUID sender, String message, Tag senderName) {
+    protected ServerPlayerChatMessagePacket(UUID sender, String message, Tag senderName, Tag targetName) {
         this.sender = sender;
         this.message = message;
         this.senderName = senderName;
+        this.targetName = targetName;
     }
 
     public String getMessage() {
@@ -59,6 +61,14 @@ public class ServerPlayerChatMessagePacket extends ClientboundPacket {
 
     public Tag getSenderNameNBT() {
         return senderName;
+    }
+
+    public ChatComponent getTargetName() {
+        return ChatComponent.fromNBT(targetName);
+    }
+
+    public Tag getTargetNameTag() {
+        return targetName;
     }
 
 }

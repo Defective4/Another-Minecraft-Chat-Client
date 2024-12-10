@@ -12,14 +12,16 @@ public class ServerDisguisedChatMessagePacket extends ClientboundPacket {
         Tag message = NBTParser.parse(in, false);
         DataTypes.readVarInt(in);
         Tag sender = NBTParser.parse(in, false);
-        return new ServerDisguisedChatMessagePacket(message, sender);
+        Tag target = in.readBoolean() ? NBTParser.parse(in, false) : null;
+        return new ServerDisguisedChatMessagePacket(message, sender, target);
     };
 
-    private final Tag message, senderName;
+    private final Tag message, senderName, targetName;
 
-    protected ServerDisguisedChatMessagePacket(Tag message, Tag senderName) {
+    protected ServerDisguisedChatMessagePacket(Tag message, Tag senderName, Tag targetName) {
         this.message = message;
         this.senderName = senderName;
+        this.targetName = targetName;
     }
 
     public ChatComponent getMessage() {
@@ -36,6 +38,14 @@ public class ServerDisguisedChatMessagePacket extends ClientboundPacket {
 
     public Tag getSenderNameTag() {
         return senderName;
+    }
+
+    public ChatComponent getTargetName() {
+        return ChatComponent.fromNBT(targetName);
+    }
+
+    public Tag getTargetNameTag() {
+        return targetName;
     }
 
 }

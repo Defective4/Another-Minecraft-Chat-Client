@@ -12,22 +12,24 @@ public class ChatMessageEvent extends ClientEvent {
 
     private final ChatComponent message;
     private final UUID sender;
-    private final ChatComponent senderName;
+    private final ChatComponent senderName, targetName;
     private final Source sourceType;
 
     public ChatMessageEvent(ChatComponent message) {
-        this(message, Source.SYSTEM, null, null);
+        this(message, Source.SYSTEM, null, null, null);
     }
 
-    public ChatMessageEvent(ChatComponent message, Source sourceType, UUID sender, ChatComponent senderName) {
+    public ChatMessageEvent(ChatComponent message, Source sourceType, UUID sender, ChatComponent senderName,
+            ChatComponent targetName) {
         this.message = message;
+        this.targetName = targetName;
         this.sourceType = sourceType;
         this.sender = sender;
         this.senderName = senderName;
     }
 
-    public ChatMessageEvent(ChatComponent message, UUID sender, ChatComponent senderName) {
-        this(message, Source.PLAYER, sender, senderName);
+    public ChatMessageEvent(ChatComponent message, UUID sender, ChatComponent senderName, ChatComponent targetName) {
+        this(message, Source.PLAYER, sender, senderName, targetName);
     }
 
     public ChatComponent getMessage() {
@@ -44,6 +46,10 @@ public class ChatMessageEvent extends ClientEvent {
 
     public Source getSourceType() {
         return sourceType;
+    }
+
+    public ChatComponent getTargetName() {
+        return targetName;
     }
 
 }

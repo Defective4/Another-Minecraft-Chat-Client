@@ -50,7 +50,9 @@ public class V767PacketReceiver extends PacketReceiver {
 
     @PacketHandler
     public void onDisguisedMessageReceived(ServerDisguisedChatMessagePacket e, MinecraftClient client) {
-        client.dispatchEvent(new ChatMessageEvent(e.getMessage(), Source.OTHER, null, e.getSenderName()));
+        client
+                .dispatchEvent(
+                        new ChatMessageEvent(e.getMessage(), Source.OTHER, null, e.getSenderName(), e.getTargetName()));
     }
 
     @PacketHandler
@@ -83,7 +85,9 @@ public class V767PacketReceiver extends PacketReceiver {
 
     @PacketHandler
     public void onPlayerMessage(ServerPlayerChatMessagePacket e, MinecraftClient client) {
-        client.dispatchEvent(new ChatMessageEvent(new ChatComponent(e.getMessage()), e.getSender(), e.getSenderName()));
+        client
+                .dispatchEvent(new ChatMessageEvent(new ChatComponent(e.getMessage()), e.getSender(), e.getSenderName(),
+                        e.getTargetName()));
     }
 
     @PacketHandler
