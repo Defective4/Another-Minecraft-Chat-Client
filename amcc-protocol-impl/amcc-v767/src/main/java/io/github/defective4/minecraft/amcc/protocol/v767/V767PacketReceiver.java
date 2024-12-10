@@ -6,6 +6,10 @@ import io.github.defective4.minecraft.amcc.protocol.MinecraftClient;
 import io.github.defective4.minecraft.amcc.protocol.abstr.PacketHandler;
 import io.github.defective4.minecraft.amcc.protocol.abstr.PacketReceiver;
 import io.github.defective4.minecraft.amcc.protocol.data.PlayerProfile;
+import io.github.defective4.minecraft.amcc.protocol.event.ClientEvent;
+import io.github.defective4.minecraft.amcc.protocol.event.game.ActionBarMessageEvent;
+import io.github.defective4.minecraft.amcc.protocol.event.game.ChatMessageEvent;
+import io.github.defective4.minecraft.amcc.protocol.event.game.ChatMessageEvent.Source;
 import io.github.defective4.minecraft.amcc.protocol.event.network.CompressionThresholdChangeEvent;
 import io.github.defective4.minecraft.amcc.protocol.event.network.KeepAliveReceivedEvent;
 import io.github.defective4.minecraft.amcc.protocol.event.state.ConfigurationFinishEvent;
@@ -18,11 +22,18 @@ import io.github.defective4.minecraft.amcc.protocol.v767.packets.server.config.S
 import io.github.defective4.minecraft.amcc.protocol.v767.packets.server.login.ServerLoginCompressionPacket;
 import io.github.defective4.minecraft.amcc.protocol.v767.packets.server.login.ServerLoginDisconnectPacket;
 import io.github.defective4.minecraft.amcc.protocol.v767.packets.server.login.ServerLoginSuccessPacket;
+import io.github.defective4.minecraft.amcc.protocol.v767.packets.server.play.ServerActionBarTextPacket;
 import io.github.defective4.minecraft.amcc.protocol.v767.packets.server.play.ServerGameJoinPacket;
 import io.github.defective4.minecraft.amcc.protocol.v767.packets.server.play.ServerKeepAlivePacket;
+import io.github.defective4.minecraft.amcc.protocol.v767.packets.server.play.ServerSystemChatMessagePacket;
 
 @SuppressWarnings("unused")
 public class V767PacketReceiver extends PacketReceiver {
+
+    @PacketHandler
+    public void onActionBarText(ServerActionBarTextPacket e, MinecraftClient client) {
+        client.dispatchEvent(new ActionBarMessageEvent(e.getText()));
+    }
 
     @PacketHandler
     public void onConfigFinish(ServerConfigFinishPacket e, MinecraftClient client) {
@@ -60,5 +71,16 @@ public class V767PacketReceiver extends PacketReceiver {
     @PacketHandler
     public void onLoginSuccess(ServerLoginSuccessPacket e, MinecraftClient client) {
         client.dispatchEvent(new LoginSuccessEvent(new PlayerProfile(e.getName(), e.getUuid())));
+    }
+
+    @PacketHandler
+    public void onSystemChatMessage(ServerSystemChatMessagePacket e, MinecraftClient client) {
+        ClientEvent event;
+        if (e.isActionBar()) {
+            event = new ActionBarMessageEvent(e.getMessage());
+        } else {
+            event = new ChatMessageEvent(Source.SYSTEM, e.getMessage());
+        }
+        client.dispatchEvent(event);
     }
 }

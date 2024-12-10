@@ -104,7 +104,7 @@ public class MinecraftClient implements AutoCloseable {
                     }
                 }
             }
-        } catch (Exception e) {
+        } catch (IOException e) {
             if (!isClosed()) {
                 close();
                 throw e;
