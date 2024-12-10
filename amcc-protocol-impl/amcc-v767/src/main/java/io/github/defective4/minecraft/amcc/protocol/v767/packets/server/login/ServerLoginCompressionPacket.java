@@ -11,7 +11,7 @@ public class ServerLoginCompressionPacket extends ClientboundPacket {
 
     private final int threshold;
 
-    public ServerLoginCompressionPacket(int threshold) {
+    protected ServerLoginCompressionPacket(int threshold) {
         this.threshold = threshold;
     }
 

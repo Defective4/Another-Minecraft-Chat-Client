@@ -14,7 +14,7 @@ public class ServerLoginDisconnectPacket extends ClientboundPacket {
 
     private final String json;
 
-    public ServerLoginDisconnectPacket(String json) {
+    protected ServerLoginDisconnectPacket(String json) {
         this.json = json;
     }
 

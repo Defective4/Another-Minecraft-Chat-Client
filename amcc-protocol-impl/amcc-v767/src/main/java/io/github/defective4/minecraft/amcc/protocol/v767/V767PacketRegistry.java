@@ -10,6 +10,7 @@ import io.github.defective4.minecraft.amcc.protocol.v767.packets.server.login.Se
 import io.github.defective4.minecraft.amcc.protocol.v767.packets.server.login.ServerLoginDisconnectPacket;
 import io.github.defective4.minecraft.amcc.protocol.v767.packets.server.login.ServerLoginSuccessPacket;
 import io.github.defective4.minecraft.amcc.protocol.v767.packets.server.play.ServerGameJoinPacket;
+import io.github.defective4.minecraft.amcc.protocol.v767.packets.server.play.ServerKeepAlivePacket;
 
 public class V767PacketRegistry extends PacketRegistry {
 
@@ -28,6 +29,7 @@ public class V767PacketRegistry extends PacketRegistry {
 
     @Override
     protected void initPlayPackets(Map<Integer, PacketFactory<?>> map) {
+        map.put(0x26, ServerKeepAlivePacket.FACTORY);
         map.put(0x2B, ServerGameJoinPacket.FACTORY);
     }
 

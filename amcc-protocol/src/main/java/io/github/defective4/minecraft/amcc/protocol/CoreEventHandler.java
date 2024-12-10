@@ -6,6 +6,7 @@ import io.github.defective4.minecraft.amcc.protocol.data.GameState;
 import io.github.defective4.minecraft.amcc.protocol.event.ClientEventListener;
 import io.github.defective4.minecraft.amcc.protocol.event.EventHandler;
 import io.github.defective4.minecraft.amcc.protocol.event.network.CompressionThresholdChangeEvent;
+import io.github.defective4.minecraft.amcc.protocol.event.network.KeepAliveReceivedEvent;
 import io.github.defective4.minecraft.amcc.protocol.event.state.ConfigurationFinishEvent;
 import io.github.defective4.minecraft.amcc.protocol.event.state.KickEvent;
 import io.github.defective4.minecraft.amcc.protocol.event.state.LoginSuccessEvent;
@@ -33,6 +34,11 @@ public class CoreEventHandler implements ClientEventListener {
     @EventHandler
     public void onDisconnect(KickEvent e) throws IOException {
         client.close();
+    }
+
+    @EventHandler
+    public void onKeepAlive(KeepAliveReceivedEvent e) throws IOException {
+        client.getExecutor().respondToKeepAlive(client, e.getKeepAliveID());
     }
 
     @EventHandler

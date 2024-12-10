@@ -9,6 +9,7 @@ import io.github.defective4.minecraft.amcc.protocol.packets.ServerboundPacket;
 import io.github.defective4.minecraft.amcc.protocol.v767.packets.client.config.ClientConfigFinishAckPacket;
 import io.github.defective4.minecraft.amcc.protocol.v767.packets.client.login.ClientLoginAcknowledgedPacket;
 import io.github.defective4.minecraft.amcc.protocol.v767.packets.client.login.ClientLoginStartPacket;
+import io.github.defective4.minecraft.amcc.protocol.v767.packets.client.play.ClientKeepAlivePacket;
 
 public class V767ProtocolExecutor implements ProtocolExecutor {
 
@@ -25,6 +26,11 @@ public class V767ProtocolExecutor implements ProtocolExecutor {
     @Override
     public ServerboundPacket createLoginPacket(PlayerProfile profile) {
         return new ClientLoginStartPacket(profile.getName(), profile.getUuid());
+    }
+
+    @Override
+    public void respondToKeepAlive(MinecraftClient client, long id) throws IOException {
+        client.sendPacket(new ClientKeepAlivePacket(id));
     }
 
 }

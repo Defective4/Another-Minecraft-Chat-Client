@@ -7,6 +7,7 @@ import io.github.defective4.minecraft.amcc.protocol.abstr.PacketHandler;
 import io.github.defective4.minecraft.amcc.protocol.abstr.PacketReceiver;
 import io.github.defective4.minecraft.amcc.protocol.data.PlayerProfile;
 import io.github.defective4.minecraft.amcc.protocol.event.network.CompressionThresholdChangeEvent;
+import io.github.defective4.minecraft.amcc.protocol.event.network.KeepAliveReceivedEvent;
 import io.github.defective4.minecraft.amcc.protocol.event.state.ConfigurationFinishEvent;
 import io.github.defective4.minecraft.amcc.protocol.event.state.GameJoinedEvent;
 import io.github.defective4.minecraft.amcc.protocol.event.state.KickEvent;
@@ -18,6 +19,7 @@ import io.github.defective4.minecraft.amcc.protocol.v767.packets.server.login.Se
 import io.github.defective4.minecraft.amcc.protocol.v767.packets.server.login.ServerLoginDisconnectPacket;
 import io.github.defective4.minecraft.amcc.protocol.v767.packets.server.login.ServerLoginSuccessPacket;
 import io.github.defective4.minecraft.amcc.protocol.v767.packets.server.play.ServerGameJoinPacket;
+import io.github.defective4.minecraft.amcc.protocol.v767.packets.server.play.ServerKeepAlivePacket;
 
 @SuppressWarnings("unused")
 public class V767PacketReceiver extends PacketReceiver {
@@ -38,6 +40,11 @@ public class V767PacketReceiver extends PacketReceiver {
                 .dispatchEvent(new GameJoinedEvent(e.getEntityID(), e.isHardcore(), e.getDimensions(),
                         e.getViewDistance(), e.getSimDistance(), e.isReducedDebugInfo(), e.getDimension(),
                         e.getHashedSeed(), e.getGameMode(), e.getPreviousGameMode(), e.isEnforcesSecureChat()));
+    }
+
+    @PacketHandler
+    public void onKeepAliveReceived(ServerKeepAlivePacket e, MinecraftClient client) {
+        client.dispatchEvent(new KeepAliveReceivedEvent(e.getId()));
     }
 
     @PacketHandler
