@@ -10,6 +10,18 @@ public class DataTypes {
     private static final int CONTINUE_BIT = 0x80;
     private static final int SEGMENT_BITS = 0x7F;
 
+    public static int getVarIntSize(int value) {
+        int size = 0;
+        while (true) {
+            if ((value & ~SEGMENT_BITS) == 0) {
+                size++;
+                return size;
+            }
+            size++;
+            value >>>= 7;
+        }
+    }
+
     public static UUID readUUID(DataInput in) throws IOException {
         return new UUID(in.readLong(), in.readLong());
     }

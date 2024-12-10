@@ -6,6 +6,7 @@ import io.github.defective4.minecraft.amcc.protocol.abstr.PacketFactory;
 import io.github.defective4.minecraft.amcc.protocol.abstr.PacketRegistry;
 import io.github.defective4.minecraft.amcc.protocol.v767.packets.server.config.ServerConfigFinishPacket;
 import io.github.defective4.minecraft.amcc.protocol.v767.packets.server.config.ServerConfigKnownPacksPacket;
+import io.github.defective4.minecraft.amcc.protocol.v767.packets.server.login.ServerLoginCompressionPacket;
 import io.github.defective4.minecraft.amcc.protocol.v767.packets.server.login.ServerLoginSuccessPacket;
 
 public class V767PacketRegistry extends PacketRegistry {
@@ -19,6 +20,7 @@ public class V767PacketRegistry extends PacketRegistry {
     @Override
     protected void initLoginPackets(Map<Integer, PacketFactory<?>> map) {
         map.put(0x02, ServerLoginSuccessPacket.FACTORY);
+        map.put(0x03, ServerLoginCompressionPacket.FACTORY);
     }
 
     @Override

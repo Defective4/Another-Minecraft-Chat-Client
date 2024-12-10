@@ -17,10 +17,16 @@ public class ServerboundPacket implements DataOutput {
     }
 
     public byte[] getData() {
+        return getData(-1);
+    }
+
+    public byte[] getData(int compressionThreshold) {
         try (ByteArrayOutputStream finalBuffer = new ByteArrayOutputStream();
                 DataOutputStream finalWrapper = new DataOutputStream(finalBuffer)) {
             byte[] rawData = buffer.toByteArray();
-            DataTypes.writeVarInt(finalWrapper, rawData.length);
+            boolean compressedFormat = compressionThreshold > -1;
+            DataTypes.writeVarInt(finalWrapper, rawData.length + (compressedFormat ? 1 : 0));
+            if (compressedFormat) finalWrapper.write(0);
             finalWrapper.write(rawData);
             return finalBuffer.toByteArray();
         } catch (Exception e) {

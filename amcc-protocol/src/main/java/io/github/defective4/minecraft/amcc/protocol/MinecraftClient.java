@@ -6,9 +6,12 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.net.Socket;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.zip.DataFormatException;
+import java.util.zip.Inflater;
 
 import io.github.defective4.minecraft.amcc.protocol.abstr.PacketFactory;
 import io.github.defective4.minecraft.amcc.protocol.abstr.ProtocolExecutor;
@@ -24,12 +27,14 @@ import io.github.defective4.minecraft.amcc.protocol.packets.ServerboundPacket;
 
 public class MinecraftClient implements AutoCloseable {
     private final PlayerProfile clientSideProfile;
+    private int compressionThreshold = -1;
     private boolean connected;
     private GameState currentGameState = GameState.HANDSHAKE;
     private final ProtocolExecutor executor;
-    private final String host;
 
+    private final String host;
     private DataInputStream in;
+    private final Inflater inflater = new Inflater();
     private final List<ClientEventListener> listeners = new CopyOnWriteArrayList<>();
     private OutputStream out;
     private final int port;
@@ -55,7 +60,7 @@ public class MinecraftClient implements AutoCloseable {
         socket.close();
     }
 
-    public void connect() throws IOException {
+    public void connect() throws IOException, DataFormatException {
         socket.connect(new InetSocketAddress(host, port));
         in = new DataInputStream(socket.getInputStream());
         out = socket.getOutputStream();
@@ -67,9 +72,29 @@ public class MinecraftClient implements AutoCloseable {
 
         while (!socket.isClosed()) {
             int len = DataTypes.readVarInt(in);
-            int id = in.readByte();
-            byte[] data = new byte[len - 1];
-            in.readFully(data);
+            int id;
+            byte[] data;
+            if (compressionThreshold > -1) {
+                int dataLen = DataTypes.readVarInt(in);
+                if (dataLen == 0) {
+                    id = in.read();
+                    data = new byte[len - 2];
+                    in.readFully(data);
+                } else {
+                    byte[] uncompressed = new byte[dataLen];
+                    data = new byte[len - DataTypes.getVarIntSize(dataLen)];
+                    in.readFully(data);
+                    inflater.reset();
+                    inflater.setInput(data);
+                    int read = inflater.inflate(uncompressed);
+                    id = uncompressed[0];
+                    data = Arrays.copyOfRange(uncompressed, 1, uncompressed.length);
+                }
+            } else {
+                id = in.read();
+                data = new byte[len - 1];
+                in.readFully(data);
+            }
             System.out.println(Integer.toHexString(id));
             try (DataInputStream wrapper = new DataInputStream(new ByteArrayInputStream(data))) {
                 PacketFactory<?> factory = protocol.getPacketRegistry().getPacket(currentGameState, id);
@@ -87,6 +112,10 @@ public class MinecraftClient implements AutoCloseable {
 
     public PlayerProfile getClientProfile() {
         return clientSideProfile;
+    }
+
+    public int getCompressionThreshold() {
+        return compressionThreshold;
     }
 
     public GameState getCurrentGameState() {
@@ -119,11 +148,15 @@ public class MinecraftClient implements AutoCloseable {
 
     public void sendPacket(ServerboundPacket packet) throws IOException {
         if (!isConnected()) throw new IOException("Client not connected");
-        out.write(packet.getData());
+        out.write(packet.getData(compressionThreshold));
     }
 
     protected ProtocolExecutor getExecutor() {
         return executor;
+    }
+
+    protected void setCompressionThreshold(int compressionThreshold) {
+        this.compressionThreshold = compressionThreshold;
     }
 
     protected void setCurrentGameState(GameState currentGameState) {

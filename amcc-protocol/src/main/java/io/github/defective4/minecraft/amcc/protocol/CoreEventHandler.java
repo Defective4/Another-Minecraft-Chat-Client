@@ -5,6 +5,7 @@ import java.io.IOException;
 import io.github.defective4.minecraft.amcc.protocol.data.GameState;
 import io.github.defective4.minecraft.amcc.protocol.event.ClientEventListener;
 import io.github.defective4.minecraft.amcc.protocol.event.EventHandler;
+import io.github.defective4.minecraft.amcc.protocol.event.network.CompressionThresholdChangeEvent;
 import io.github.defective4.minecraft.amcc.protocol.event.state.ConfigurationFinishEvent;
 import io.github.defective4.minecraft.amcc.protocol.event.state.LoginSuccessEvent;
 
@@ -15,6 +16,11 @@ public class CoreEventHandler implements ClientEventListener {
 
     public CoreEventHandler(MinecraftClient client) {
         this.client = client;
+    }
+
+    @EventHandler
+    public void onCompressionThrChange(CompressionThresholdChangeEvent e) {
+        client.setCompressionThreshold(e.getNewThreshold());
     }
 
     @EventHandler
