@@ -23,9 +23,12 @@ import io.github.defective4.minecraft.amcc.protocol.v767.packets.server.login.Se
 import io.github.defective4.minecraft.amcc.protocol.v767.packets.server.login.ServerLoginDisconnectPacket;
 import io.github.defective4.minecraft.amcc.protocol.v767.packets.server.login.ServerLoginSuccessPacket;
 import io.github.defective4.minecraft.amcc.protocol.v767.packets.server.play.ServerActionBarTextPacket;
+import io.github.defective4.minecraft.amcc.protocol.v767.packets.server.play.ServerDisguisedChatMessagePacket;
 import io.github.defective4.minecraft.amcc.protocol.v767.packets.server.play.ServerGameJoinPacket;
 import io.github.defective4.minecraft.amcc.protocol.v767.packets.server.play.ServerKeepAlivePacket;
+import io.github.defective4.minecraft.amcc.protocol.v767.packets.server.play.ServerPlayerChatMessagePacket;
 import io.github.defective4.minecraft.amcc.protocol.v767.packets.server.play.ServerSystemChatMessagePacket;
+import io.github.defective4.minecraft.chatlib.chat.ChatComponent;
 
 @SuppressWarnings("unused")
 public class V767PacketReceiver extends PacketReceiver {
@@ -43,6 +46,11 @@ public class V767PacketReceiver extends PacketReceiver {
     @PacketHandler
     public void onConfigPacks(ServerConfigKnownPacksPacket e, MinecraftClient client) throws IOException {
         client.sendPacket(new ClientConfigKnownPacksPacket(e.getDatapacks()));
+    }
+
+    @PacketHandler
+    public void onDisguisedMessageReceived(ServerDisguisedChatMessagePacket e, MinecraftClient client) {
+        client.dispatchEvent(new ChatMessageEvent(e.getMessage(), Source.OTHER, null, e.getSenderName()));
     }
 
     @PacketHandler
@@ -74,12 +82,17 @@ public class V767PacketReceiver extends PacketReceiver {
     }
 
     @PacketHandler
+    public void onPlayerMessage(ServerPlayerChatMessagePacket e, MinecraftClient client) {
+        client.dispatchEvent(new ChatMessageEvent(new ChatComponent(e.getMessage()), e.getSender(), e.getSenderName()));
+    }
+
+    @PacketHandler
     public void onSystemChatMessage(ServerSystemChatMessagePacket e, MinecraftClient client) {
         ClientEvent event;
         if (e.isActionBar()) {
             event = new ActionBarMessageEvent(e.getMessage());
         } else {
-            event = new ChatMessageEvent(Source.SYSTEM, e.getMessage());
+            event = new ChatMessageEvent(e.getMessage());
         }
         client.dispatchEvent(event);
     }

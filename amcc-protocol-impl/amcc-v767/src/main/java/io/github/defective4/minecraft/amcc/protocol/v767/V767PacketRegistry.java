@@ -10,8 +10,10 @@ import io.github.defective4.minecraft.amcc.protocol.v767.packets.server.login.Se
 import io.github.defective4.minecraft.amcc.protocol.v767.packets.server.login.ServerLoginDisconnectPacket;
 import io.github.defective4.minecraft.amcc.protocol.v767.packets.server.login.ServerLoginSuccessPacket;
 import io.github.defective4.minecraft.amcc.protocol.v767.packets.server.play.ServerActionBarTextPacket;
+import io.github.defective4.minecraft.amcc.protocol.v767.packets.server.play.ServerDisguisedChatMessagePacket;
 import io.github.defective4.minecraft.amcc.protocol.v767.packets.server.play.ServerGameJoinPacket;
 import io.github.defective4.minecraft.amcc.protocol.v767.packets.server.play.ServerKeepAlivePacket;
+import io.github.defective4.minecraft.amcc.protocol.v767.packets.server.play.ServerPlayerChatMessagePacket;
 import io.github.defective4.minecraft.amcc.protocol.v767.packets.server.play.ServerSystemChatMessagePacket;
 
 public class V767PacketRegistry extends PacketRegistry {
@@ -31,8 +33,10 @@ public class V767PacketRegistry extends PacketRegistry {
 
     @Override
     protected void initPlayPackets(Map<Integer, PacketFactory<?>> map) {
+        map.put(0x1E, ServerDisguisedChatMessagePacket.FACTORY);
         map.put(0x26, ServerKeepAlivePacket.FACTORY);
         map.put(0x2B, ServerGameJoinPacket.FACTORY);
+        map.put(0x39, ServerPlayerChatMessagePacket.FACTORY);
         map.put(0x4C, ServerActionBarTextPacket.FACTORY);
         map.put(0x6C, ServerSystemChatMessagePacket.FACTORY);
     }
