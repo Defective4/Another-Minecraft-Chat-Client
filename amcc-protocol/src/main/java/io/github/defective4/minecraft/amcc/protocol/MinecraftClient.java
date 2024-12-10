@@ -70,38 +70,44 @@ public class MinecraftClient implements AutoCloseable {
         currentGameState = GameState.LOGIN;
         sendPacket(executor.createLoginPacket(clientSideProfile));
 
-        while (!socket.isClosed()) {
-            int len = DataTypes.readVarInt(in);
-            int id;
-            byte[] data;
-            if (compressionThreshold > -1) {
-                int dataLen = DataTypes.readVarInt(in);
-                if (dataLen == 0) {
-                    id = in.read();
-                    data = new byte[len - 2];
-                    in.readFully(data);
+        try {
+            while (!socket.isClosed()) {
+                int len = DataTypes.readVarInt(in);
+                int id;
+                byte[] data;
+                if (compressionThreshold > -1) {
+                    int dataLen = DataTypes.readVarInt(in);
+                    if (dataLen == 0) {
+                        id = in.read();
+                        data = new byte[len - 2];
+                        in.readFully(data);
+                    } else {
+                        byte[] uncompressed = new byte[dataLen];
+                        data = new byte[len - DataTypes.getVarIntSize(dataLen)];
+                        in.readFully(data);
+                        inflater.reset();
+                        inflater.setInput(data);
+                        int read = inflater.inflate(uncompressed);
+                        id = uncompressed[0];
+                        data = Arrays.copyOfRange(uncompressed, 1, uncompressed.length);
+                    }
                 } else {
-                    byte[] uncompressed = new byte[dataLen];
-                    data = new byte[len - DataTypes.getVarIntSize(dataLen)];
+                    id = in.read();
+                    data = new byte[len - 1];
                     in.readFully(data);
-                    inflater.reset();
-                    inflater.setInput(data);
-                    int read = inflater.inflate(uncompressed);
-                    id = uncompressed[0];
-                    data = Arrays.copyOfRange(uncompressed, 1, uncompressed.length);
                 }
-            } else {
-                id = in.read();
-                data = new byte[len - 1];
-                in.readFully(data);
+                try (DataInputStream wrapper = new DataInputStream(new ByteArrayInputStream(data))) {
+                    PacketFactory<?> factory = protocol.getPacketRegistry().getPacket(currentGameState, id);
+                    if (factory != null) {
+                        ClientboundPacket packet = factory.decode(wrapper);
+                        protocol.getReceiver().receivePacket(packet, this);
+                    }
+                }
             }
-            System.out.println(Integer.toHexString(id));
-            try (DataInputStream wrapper = new DataInputStream(new ByteArrayInputStream(data))) {
-                PacketFactory<?> factory = protocol.getPacketRegistry().getPacket(currentGameState, id);
-                if (factory != null) {
-                    ClientboundPacket packet = factory.decode(wrapper);
-                    protocol.getReceiver().receivePacket(packet, this);
-                }
+        } catch (Exception e) {
+            if (!isClosed()) {
+                close();
+                throw e;
             }
         }
     }
