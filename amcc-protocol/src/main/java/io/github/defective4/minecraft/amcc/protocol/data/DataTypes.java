@@ -56,4 +56,10 @@ public class DataTypes {
             value >>>= 7;
         }
     }
+
+    public static void writeVarString(DataOutput out, String value) throws IOException {
+        byte[] data = value.getBytes(StandardCharsets.UTF_8);
+        writeVarInt(out, data.length);
+        out.write(data);
+    }
 }

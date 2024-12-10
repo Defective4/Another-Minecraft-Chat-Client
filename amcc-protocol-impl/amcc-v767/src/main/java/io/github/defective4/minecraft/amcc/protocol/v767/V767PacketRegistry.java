@@ -9,6 +9,7 @@ import io.github.defective4.minecraft.amcc.protocol.v767.packets.server.config.S
 import io.github.defective4.minecraft.amcc.protocol.v767.packets.server.login.ServerLoginCompressionPacket;
 import io.github.defective4.minecraft.amcc.protocol.v767.packets.server.login.ServerLoginDisconnectPacket;
 import io.github.defective4.minecraft.amcc.protocol.v767.packets.server.login.ServerLoginSuccessPacket;
+import io.github.defective4.minecraft.amcc.protocol.v767.packets.server.play.ServerGameJoinPacket;
 
 public class V767PacketRegistry extends PacketRegistry {
 
@@ -26,6 +27,8 @@ public class V767PacketRegistry extends PacketRegistry {
     }
 
     @Override
-    protected void initPlayPackets(Map<Integer, PacketFactory<?>> map) {}
+    protected void initPlayPackets(Map<Integer, PacketFactory<?>> map) {
+        map.put(0x2B, ServerGameJoinPacket.FACTORY);
+    }
 
 }
