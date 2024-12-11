@@ -7,8 +7,12 @@ import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.zip.DataFormatException;
 import java.util.zip.Inflater;
@@ -17,7 +21,9 @@ import io.github.defective4.minecraft.amcc.protocol.abstr.PacketFactory;
 import io.github.defective4.minecraft.amcc.protocol.abstr.ProtocolExecutor;
 import io.github.defective4.minecraft.amcc.protocol.abstr.ProtocolSet;
 import io.github.defective4.minecraft.amcc.protocol.data.DataTypes;
+import io.github.defective4.minecraft.amcc.protocol.data.GameProfile;
 import io.github.defective4.minecraft.amcc.protocol.data.GameState;
+import io.github.defective4.minecraft.amcc.protocol.data.PlayerInfoItem;
 import io.github.defective4.minecraft.amcc.protocol.data.PlayerProfile;
 import io.github.defective4.minecraft.amcc.protocol.event.ClientEvent;
 import io.github.defective4.minecraft.amcc.protocol.event.ClientEventListener;
@@ -37,9 +43,11 @@ public class MinecraftClient implements AutoCloseable {
     private final Inflater inflater = new Inflater();
     private final List<ClientEventListener> listeners = new CopyOnWriteArrayList<>();
     private OutputStream out;
+    private final Map<UUID, PlayerInfoItem> players = new HashMap<>();
     private final int port;
     private final ProtocolSet protocol;
     private PlayerProfile serverSideProfile;
+
     private final Socket socket = new Socket();
 
     public MinecraftClient(String host, int port, PlayerProfile profile, ProtocolSet protocol) {
@@ -132,6 +140,18 @@ public class MinecraftClient implements AutoCloseable {
         return Collections.unmodifiableList(listeners);
     }
 
+    public GameProfile getPlayer(UUID uuid) {
+        return players.containsKey(uuid) ? players.get(uuid).getProfile() : null;
+    }
+
+    public PlayerInfoItem getPlayerItem(UUID uuid) {
+        return players.get(uuid);
+    }
+
+    public Collection<PlayerInfoItem> getPlayers() {
+        return Collections.unmodifiableCollection(players.values());
+    }
+
     public PlayerProfile getServerProfile() {
         return serverSideProfile;
     }
@@ -161,8 +181,16 @@ public class MinecraftClient implements AutoCloseable {
         out.write(packet.getData(compressionThreshold));
     }
 
+    protected void addPlayer(PlayerInfoItem item) {
+        players.put(item.getUuid(), item);
+    }
+
     protected ProtocolExecutor getExecutor() {
         return executor;
+    }
+
+    protected void removePlayer(PlayerInfoItem item) {
+        players.remove(item.getUuid());
     }
 
     protected void setCompressionThreshold(int compressionThreshold) {
