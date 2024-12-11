@@ -14,6 +14,7 @@ import io.github.defective4.minecraft.amcc.protocol.v767.packets.server.play.Ser
 import io.github.defective4.minecraft.amcc.protocol.v767.packets.server.play.ServerGameJoinPacket;
 import io.github.defective4.minecraft.amcc.protocol.v767.packets.server.play.ServerKeepAlivePacket;
 import io.github.defective4.minecraft.amcc.protocol.v767.packets.server.play.ServerPlayerChatMessagePacket;
+import io.github.defective4.minecraft.amcc.protocol.v767.packets.server.play.ServerPlayerInfoUpdatePacket;
 import io.github.defective4.minecraft.amcc.protocol.v767.packets.server.play.ServerSystemChatMessagePacket;
 
 public class V767PacketRegistry extends PacketRegistry {
@@ -37,6 +38,7 @@ public class V767PacketRegistry extends PacketRegistry {
         map.put(0x26, ServerKeepAlivePacket.FACTORY);
         map.put(0x2B, ServerGameJoinPacket.FACTORY);
         map.put(0x39, ServerPlayerChatMessagePacket.FACTORY);
+        map.put(0x3E, ServerPlayerInfoUpdatePacket.FACTORY);
         map.put(0x4C, ServerActionBarTextPacket.FACTORY);
         map.put(0x6C, ServerSystemChatMessagePacket.FACTORY);
     }

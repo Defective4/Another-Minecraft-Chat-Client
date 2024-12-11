@@ -11,7 +11,7 @@ import io.github.defective4.minecraft.amcc.protocol.data.BlockPosition;
 import io.github.defective4.minecraft.amcc.protocol.data.GameMode;
 import io.github.defective4.minecraft.amcc.protocol.data.Identifier;
 import io.github.defective4.minecraft.amcc.protocol.packets.ClientboundPacket;
-import io.github.defective4.minecraft.amcc.protocol.v767.data.BlockPositionCodec;
+import io.github.defective4.minecraft.amcc.protocol.v767.V767Codecs;
 
 public class ServerGameJoinPacket extends ClientboundPacket {
 
@@ -38,7 +38,7 @@ public class ServerGameJoinPacket extends ClientboundPacket {
         BlockPosition deathLocation = null;
         if (in.readBoolean()) {
             deathDimension = Identifier.CODEC.read(in);
-            deathLocation = BlockPositionCodec.CODEC.read(in);
+            deathLocation = V767Codecs.BLOCK_POSITION.read(in);
         }
         readVarInt(in);
         boolean enforcesSecureChat = in.readBoolean();

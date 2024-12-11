@@ -10,6 +10,7 @@ import io.github.defective4.minecraft.amcc.protocol.event.ClientEvent;
 import io.github.defective4.minecraft.amcc.protocol.event.game.ActionBarMessageEvent;
 import io.github.defective4.minecraft.amcc.protocol.event.game.ChatMessageEvent;
 import io.github.defective4.minecraft.amcc.protocol.event.game.ChatMessageEvent.Source;
+import io.github.defective4.minecraft.amcc.protocol.event.game.PlayerListUpdatedEvent;
 import io.github.defective4.minecraft.amcc.protocol.event.network.CompressionThresholdChangeEvent;
 import io.github.defective4.minecraft.amcc.protocol.event.network.KeepAliveReceivedEvent;
 import io.github.defective4.minecraft.amcc.protocol.event.state.ConfigurationFinishEvent;
@@ -27,6 +28,7 @@ import io.github.defective4.minecraft.amcc.protocol.v767.packets.server.play.Ser
 import io.github.defective4.minecraft.amcc.protocol.v767.packets.server.play.ServerGameJoinPacket;
 import io.github.defective4.minecraft.amcc.protocol.v767.packets.server.play.ServerKeepAlivePacket;
 import io.github.defective4.minecraft.amcc.protocol.v767.packets.server.play.ServerPlayerChatMessagePacket;
+import io.github.defective4.minecraft.amcc.protocol.v767.packets.server.play.ServerPlayerInfoUpdatePacket;
 import io.github.defective4.minecraft.amcc.protocol.v767.packets.server.play.ServerSystemChatMessagePacket;
 import io.github.defective4.minecraft.chatlib.chat.ChatComponent;
 
@@ -81,6 +83,11 @@ public class V767PacketReceiver extends PacketReceiver {
     @PacketHandler
     public void onLoginSuccess(ServerLoginSuccessPacket e, MinecraftClient client) {
         client.dispatchEvent(new LoginSuccessEvent(new PlayerProfile(e.getName(), e.getUuid())));
+    }
+
+    @PacketHandler
+    public void onPlayerInfoUpdate(ServerPlayerInfoUpdatePacket e, MinecraftClient client) {
+        client.dispatchEvent(new PlayerListUpdatedEvent(e.getActions(), e.getItems()));
     }
 
     @PacketHandler
