@@ -18,6 +18,7 @@ import io.github.defective4.minecraft.amcc.protocol.event.game.ActionBarMessageE
 import io.github.defective4.minecraft.amcc.protocol.event.game.ChatMessageEvent;
 import io.github.defective4.minecraft.amcc.protocol.event.game.ChatMessageEvent.Source;
 import io.github.defective4.minecraft.amcc.protocol.event.game.PlayerListUpdatedEvent;
+import io.github.defective4.minecraft.amcc.protocol.event.game.RegistryDataReceivedEvent;
 import io.github.defective4.minecraft.amcc.protocol.event.network.CompressionThresholdChangeEvent;
 import io.github.defective4.minecraft.amcc.protocol.event.network.KeepAliveReceivedEvent;
 import io.github.defective4.minecraft.amcc.protocol.event.state.ConfigurationFinishEvent;
@@ -27,6 +28,7 @@ import io.github.defective4.minecraft.amcc.protocol.event.state.LoginSuccessEven
 import io.github.defective4.minecraft.amcc.protocol.v767.packets.client.config.ClientConfigKnownPacksPacket;
 import io.github.defective4.minecraft.amcc.protocol.v767.packets.server.config.ServerConfigFinishPacket;
 import io.github.defective4.minecraft.amcc.protocol.v767.packets.server.config.ServerConfigKnownPacksPacket;
+import io.github.defective4.minecraft.amcc.protocol.v767.packets.server.config.ServerConfigRegistryDataPacket;
 import io.github.defective4.minecraft.amcc.protocol.v767.packets.server.login.ServerLoginCompressionPacket;
 import io.github.defective4.minecraft.amcc.protocol.v767.packets.server.login.ServerLoginDisconnectPacket;
 import io.github.defective4.minecraft.amcc.protocol.v767.packets.server.login.ServerLoginSuccessPacket;
@@ -42,6 +44,11 @@ import io.github.defective4.minecraft.chatlib.chat.ChatComponent;
 
 @SuppressWarnings("unused")
 public class V767PacketReceiver extends PacketReceiver {
+
+    @PacketHandler
+    public void onConfigRegistryData(ServerConfigRegistryDataPacket e, MinecraftClient client) {
+        client.dispatchEvent(new RegistryDataReceivedEvent(e.getId(), e.getData()));
+    }
 
     @PacketHandler
     public void onActionBarText(ServerActionBarTextPacket e, MinecraftClient client) {
