@@ -57,7 +57,7 @@ public class ServerPlayerInfoUpdatePacket extends ClientboundPacket {
                 displayName = NBTParser.parse(in, false);
             items
                     .add(new PlayerInfoItem(uuid, new GameProfile(name, uuid, properties), gameMode, listed, ping,
-                            displayName == null ? null : ChatComponent.fromNBT(displayName)));
+                            ChatComponent.fromNBT(displayName)));
         }
         return new ServerPlayerInfoUpdatePacket(actions, items);
     };
