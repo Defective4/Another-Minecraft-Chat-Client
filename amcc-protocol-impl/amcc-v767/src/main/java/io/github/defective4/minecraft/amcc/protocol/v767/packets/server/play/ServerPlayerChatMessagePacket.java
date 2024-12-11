@@ -27,24 +27,31 @@ public class ServerPlayerChatMessagePacket extends ClientboundPacket {
             in.skipBytes(256);
         }
         if (in.readBoolean()) NBTParser.parse(in, false);
-        readVarInt(in);
-        long len = readVarInt(in);
-        for (int i = 0; i < len; i++) in.readLong();
-        readVarInt(in);
+        if (readVarInt(in) == 2) {
+            int len = readVarInt(in);
+            for (int i = 0; i < len; i++) in.readLong();
+        }
+        int chatType = readVarInt(in);
         Tag senderName = NBTParser.parse(in, false);
         Tag targetName = in.readBoolean() ? NBTParser.parse(in, false) : null;
-        return new ServerPlayerChatMessagePacket(sender, message, senderName, targetName);
+        return new ServerPlayerChatMessagePacket(sender, message, senderName, targetName, chatType);
     };
 
+    private final int chatType;
     private final String message;
     private final UUID sender;
     private final Tag senderName, targetName;
 
-    protected ServerPlayerChatMessagePacket(UUID sender, String message, Tag senderName, Tag targetName) {
+    protected ServerPlayerChatMessagePacket(UUID sender, String message, Tag senderName, Tag targetName, int chatType) {
         this.sender = sender;
         this.message = message;
         this.senderName = senderName;
         this.targetName = targetName;
+        this.chatType = chatType;
+    }
+
+    public int getChatType() {
+        return chatType;
     }
 
     public String getMessage() {

@@ -25,20 +25,20 @@ public class ServerConfigRegistryDataPacket extends ClientboundPacket {
         return new ServerConfigRegistryDataPacket(id, data);
     };
 
-    private final Identifier id;
     private final Map<Identifier, Tag> data;
+    private final Identifier id;
 
     protected ServerConfigRegistryDataPacket(Identifier id, Map<Identifier, Tag> data) {
         this.id = id;
         this.data = Collections.unmodifiableMap(data);
     }
 
-    public Identifier getId() {
-        return id;
-    }
-
     public Map<Identifier, Tag> getData() {
         return data;
+    }
+
+    public Identifier getId() {
+        return id;
     }
 
 }

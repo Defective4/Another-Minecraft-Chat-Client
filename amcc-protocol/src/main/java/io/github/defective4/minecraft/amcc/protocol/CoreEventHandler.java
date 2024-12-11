@@ -2,21 +2,27 @@ package io.github.defective4.minecraft.amcc.protocol;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map.Entry;
 
 import io.github.defective4.minecraft.amcc.protocol.data.GameMode;
 import io.github.defective4.minecraft.amcc.protocol.data.GameProfile;
 import io.github.defective4.minecraft.amcc.protocol.data.GameState;
+import io.github.defective4.minecraft.amcc.protocol.data.Identifier;
 import io.github.defective4.minecraft.amcc.protocol.data.PlayerInfoAction;
 import io.github.defective4.minecraft.amcc.protocol.data.PlayerInfoItem;
 import io.github.defective4.minecraft.amcc.protocol.event.ClientEventListener;
 import io.github.defective4.minecraft.amcc.protocol.event.EventHandler;
 import io.github.defective4.minecraft.amcc.protocol.event.game.PlayerListUpdatedEvent;
+import io.github.defective4.minecraft.amcc.protocol.event.game.RegistryDataReceivedEvent;
 import io.github.defective4.minecraft.amcc.protocol.event.network.CompressionThresholdChangeEvent;
 import io.github.defective4.minecraft.amcc.protocol.event.network.KeepAliveReceivedEvent;
 import io.github.defective4.minecraft.amcc.protocol.event.state.ConfigurationFinishEvent;
 import io.github.defective4.minecraft.amcc.protocol.event.state.KickEvent;
 import io.github.defective4.minecraft.amcc.protocol.event.state.LoginSuccessEvent;
+import io.github.defective4.minecraft.amcc.protocol.registry.ChatType;
+import io.github.defective4.minecraft.amcc.protocol.registry.Registries;
 import io.github.defective4.minecraft.chatlib.chat.ChatComponent;
+import io.github.defective4.minecraft.chatlib.nbt.tag.Tag;
 
 @SuppressWarnings("unused")
 public class CoreEventHandler implements ClientEventListener {
@@ -83,6 +89,31 @@ public class CoreEventHandler implements ClientEventListener {
                 if (actions.contains(PlayerInfoAction.UPDATE_LISTED)) listed = item.isListed();
 
                 client.addPlayer(new PlayerInfoItem(item.getUuid(), profile, gameMode, listed, ping, displayName));
+            }
+        }
+    }
+
+    @EventHandler
+    public void onRegistryDataReceived(RegistryDataReceivedEvent e) {
+        Identifier reg = e.getRegistryId();
+        if ("minecraft".equals(reg.getNamespace())) {
+            switch (reg.getValue()) {
+                case "chat_type": {
+                    for (Entry<Identifier, Tag> entry : e.getRegistryData().entrySet()) {
+                        Identifier sub = entry.getKey();
+                        if (!"minecraft".equals(sub.getNamespace())) continue;
+                        ChatType type;
+                        try {
+                            type = ChatType.valueOf(sub.getValue().toUpperCase());
+                        } catch (Exception e2) {
+                            type = null;
+                        }
+                        if (type != null) Registries.CHAT.register(type, entry.getValue());
+                    }
+                    break;
+                }
+                default:
+                    break;
             }
         }
     }

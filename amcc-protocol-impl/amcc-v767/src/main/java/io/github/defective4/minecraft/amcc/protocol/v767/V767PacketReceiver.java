@@ -46,11 +46,6 @@ import io.github.defective4.minecraft.chatlib.chat.ChatComponent;
 public class V767PacketReceiver extends PacketReceiver {
 
     @PacketHandler
-    public void onConfigRegistryData(ServerConfigRegistryDataPacket e, MinecraftClient client) {
-        client.dispatchEvent(new RegistryDataReceivedEvent(e.getId(), e.getData()));
-    }
-
-    @PacketHandler
     public void onActionBarText(ServerActionBarTextPacket e, MinecraftClient client) {
         client.dispatchEvent(new ActionBarMessageEvent(e.getText()));
     }
@@ -66,10 +61,15 @@ public class V767PacketReceiver extends PacketReceiver {
     }
 
     @PacketHandler
+    public void onConfigRegistryData(ServerConfigRegistryDataPacket e, MinecraftClient client) {
+        client.dispatchEvent(new RegistryDataReceivedEvent(e.getId(), e.getData()));
+    }
+
+    @PacketHandler
     public void onDisguisedMessageReceived(ServerDisguisedChatMessagePacket e, MinecraftClient client) {
         client
-                .dispatchEvent(
-                        new ChatMessageEvent(e.getMessage(), Source.OTHER, null, e.getSenderName(), e.getTargetName()));
+                .dispatchEvent(new ChatMessageEvent(e.getMessage(), Source.OTHER, null, e.getSenderName(),
+                        e.getTargetName(), e.getChatType()));
     }
 
     @PacketHandler
@@ -121,7 +121,7 @@ public class V767PacketReceiver extends PacketReceiver {
     public void onPlayerMessage(ServerPlayerChatMessagePacket e, MinecraftClient client) {
         client
                 .dispatchEvent(new ChatMessageEvent(new ChatComponent(e.getMessage()), e.getSender(), e.getSenderName(),
-                        e.getTargetName()));
+                        e.getTargetName(), e.getChatType()));
     }
 
     @PacketHandler

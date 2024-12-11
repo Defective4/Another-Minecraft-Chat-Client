@@ -10,18 +10,24 @@ import io.github.defective4.minecraft.chatlib.nbt.tag.Tag;
 public class ServerDisguisedChatMessagePacket extends ClientboundPacket {
     public static final PacketFactory<ServerDisguisedChatMessagePacket> FACTORY = in -> {
         Tag message = NBTParser.parse(in, false);
-        DataTypes.readVarInt(in);
+        int chatType = DataTypes.readVarInt(in);
         Tag sender = NBTParser.parse(in, false);
         Tag target = in.readBoolean() ? NBTParser.parse(in, false) : null;
-        return new ServerDisguisedChatMessagePacket(message, sender, target);
+        return new ServerDisguisedChatMessagePacket(message, sender, target, chatType);
     };
 
+    private final int chatType;
     private final Tag message, senderName, targetName;
 
-    protected ServerDisguisedChatMessagePacket(Tag message, Tag senderName, Tag targetName) {
+    protected ServerDisguisedChatMessagePacket(Tag message, Tag senderName, Tag targetName, int chatType) {
         this.message = message;
         this.senderName = senderName;
         this.targetName = targetName;
+        this.chatType = chatType;
+    }
+
+    public int getChatType() {
+        return chatType;
     }
 
     public ChatComponent getMessage() {
