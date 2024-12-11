@@ -26,6 +26,7 @@ import io.github.defective4.minecraft.amcc.protocol.event.state.GameJoinedEvent;
 import io.github.defective4.minecraft.amcc.protocol.event.state.KickEvent;
 import io.github.defective4.minecraft.amcc.protocol.event.state.LoginSuccessEvent;
 import io.github.defective4.minecraft.amcc.protocol.v767.packets.client.config.ClientConfigKnownPacksPacket;
+import io.github.defective4.minecraft.amcc.protocol.v767.packets.server.config.ServerConfigDisconnectPacket;
 import io.github.defective4.minecraft.amcc.protocol.v767.packets.server.config.ServerConfigFinishPacket;
 import io.github.defective4.minecraft.amcc.protocol.v767.packets.server.config.ServerConfigKnownPacksPacket;
 import io.github.defective4.minecraft.amcc.protocol.v767.packets.server.config.ServerConfigRegistryDataPacket;
@@ -33,6 +34,7 @@ import io.github.defective4.minecraft.amcc.protocol.v767.packets.server.login.Se
 import io.github.defective4.minecraft.amcc.protocol.v767.packets.server.login.ServerLoginDisconnectPacket;
 import io.github.defective4.minecraft.amcc.protocol.v767.packets.server.login.ServerLoginSuccessPacket;
 import io.github.defective4.minecraft.amcc.protocol.v767.packets.server.play.ServerActionBarTextPacket;
+import io.github.defective4.minecraft.amcc.protocol.v767.packets.server.play.ServerDisconnectPacket;
 import io.github.defective4.minecraft.amcc.protocol.v767.packets.server.play.ServerDisguisedChatMessagePacket;
 import io.github.defective4.minecraft.amcc.protocol.v767.packets.server.play.ServerGameJoinPacket;
 import io.github.defective4.minecraft.amcc.protocol.v767.packets.server.play.ServerKeepAlivePacket;
@@ -48,6 +50,11 @@ public class V767PacketReceiver extends PacketReceiver {
     @PacketHandler
     public void onActionBarText(ServerActionBarTextPacket e, MinecraftClient client) {
         client.dispatchEvent(new ActionBarMessageEvent(e.getText()));
+    }
+
+    @PacketHandler
+    public void onConfigDisconnect(ServerConfigDisconnectPacket e, MinecraftClient client) {
+        client.dispatchEvent(new KickEvent(e.getMessage()));
     }
 
     @PacketHandler
@@ -98,6 +105,11 @@ public class V767PacketReceiver extends PacketReceiver {
     @PacketHandler
     public void onLoginSuccess(ServerLoginSuccessPacket e, MinecraftClient client) {
         client.dispatchEvent(new LoginSuccessEvent(new PlayerProfile(e.getName(), e.getUuid())));
+    }
+
+    @PacketHandler
+    public void onPlayDisconnect(ServerDisconnectPacket e, MinecraftClient client) {
+        client.dispatchEvent(new KickEvent(e.getMessage()));
     }
 
     @PacketHandler
