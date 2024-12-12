@@ -2,6 +2,7 @@ package io.github.defective4.minecraft.amcc.protocol.event.state;
 
 import java.util.List;
 
+import io.github.defective4.minecraft.amcc.protocol.MinecraftClient;
 import io.github.defective4.minecraft.amcc.protocol.data.GameMode;
 import io.github.defective4.minecraft.amcc.protocol.data.Identifier;
 import io.github.defective4.minecraft.amcc.protocol.event.ClientEvent;
@@ -19,7 +20,8 @@ public class GameJoinedEvent extends ClientEvent {
 
     public GameJoinedEvent(int entityID, boolean hardcore, List<Identifier> dimensions, int viewDistance,
             int simDistance, boolean reducedDebugInfo, Identifier dimension, long hashedSeed, GameMode gameMode,
-            GameMode previousGameMode, boolean enforcesSecureChat) {
+            GameMode previousGameMode, boolean enforcesSecureChat, MinecraftClient client) {
+        super(client);
         this.entityID = entityID;
         this.hardcore = hardcore;
         this.dimensions = dimensions;

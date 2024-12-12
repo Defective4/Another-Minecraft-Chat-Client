@@ -49,17 +49,17 @@ public class V767PacketReceiver extends PacketReceiver {
 
     @PacketHandler
     public void onActionBarText(ServerActionBarTextPacket e, MinecraftClient client) {
-        client.dispatchEvent(new ActionBarMessageEvent(e.getText()));
+        client.dispatchEvent(new ActionBarMessageEvent(e.getText(), client));
     }
 
     @PacketHandler
     public void onConfigDisconnect(ServerConfigDisconnectPacket e, MinecraftClient client) {
-        client.dispatchEvent(new KickEvent(e.getMessage()));
+        client.dispatchEvent(new KickEvent(e.getMessage(), client));
     }
 
     @PacketHandler
     public void onConfigFinish(ServerConfigFinishPacket e, MinecraftClient client) {
-        client.dispatchEvent(new ConfigurationFinishEvent());
+        client.dispatchEvent(new ConfigurationFinishEvent(client));
     }
 
     @PacketHandler
@@ -69,14 +69,14 @@ public class V767PacketReceiver extends PacketReceiver {
 
     @PacketHandler
     public void onConfigRegistryData(ServerConfigRegistryDataPacket e, MinecraftClient client) {
-        client.dispatchEvent(new RegistryDataReceivedEvent(e.getId(), e.getData()));
+        client.dispatchEvent(new RegistryDataReceivedEvent(e.getId(), e.getData(), client));
     }
 
     @PacketHandler
     public void onDisguisedMessageReceived(ServerDisguisedChatMessagePacket e, MinecraftClient client) {
         client
                 .dispatchEvent(new ChatMessageEvent(e.getMessage(), Source.OTHER, null, e.getSenderName(),
-                        e.getTargetName(), e.getChatType()));
+                        e.getTargetName(), e.getChatType(), client));
     }
 
     @PacketHandler
@@ -84,37 +84,39 @@ public class V767PacketReceiver extends PacketReceiver {
         client
                 .dispatchEvent(new GameJoinedEvent(e.getEntityID(), e.isHardcore(), e.getDimensions(),
                         e.getViewDistance(), e.getSimDistance(), e.isReducedDebugInfo(), e.getDimension(),
-                        e.getHashedSeed(), e.getGameMode(), e.getPreviousGameMode(), e.isEnforcesSecureChat()));
+                        e.getHashedSeed(), e.getGameMode(), e.getPreviousGameMode(), e.isEnforcesSecureChat(), client));
     }
 
     @PacketHandler
     public void onKeepAliveReceived(ServerKeepAlivePacket e, MinecraftClient client) {
-        client.dispatchEvent(new KeepAliveReceivedEvent(e.getId()));
+        client.dispatchEvent(new KeepAliveReceivedEvent(e.getId(), client));
     }
 
     @PacketHandler
     public void onLoginCompressionSet(ServerLoginCompressionPacket e, MinecraftClient client) {
-        client.dispatchEvent(new CompressionThresholdChangeEvent(e.getThreshold(), client.getCompressionThreshold()));
+        client
+                .dispatchEvent(new CompressionThresholdChangeEvent(e.getThreshold(), client.getCompressionThreshold(),
+                        client));
     }
 
     @PacketHandler
     public void onLoginDisconnect(ServerLoginDisconnectPacket e, MinecraftClient client) {
-        client.dispatchEvent(new KickEvent(e.getMessage()));
+        client.dispatchEvent(new KickEvent(e.getMessage(), client));
     }
 
     @PacketHandler
     public void onLoginSuccess(ServerLoginSuccessPacket e, MinecraftClient client) {
-        client.dispatchEvent(new LoginSuccessEvent(new PlayerProfile(e.getName(), e.getUuid())));
+        client.dispatchEvent(new LoginSuccessEvent(new PlayerProfile(e.getName(), e.getUuid()), client));
     }
 
     @PacketHandler
     public void onPlayDisconnect(ServerDisconnectPacket e, MinecraftClient client) {
-        client.dispatchEvent(new KickEvent(e.getMessage()));
+        client.dispatchEvent(new KickEvent(e.getMessage(), client));
     }
 
     @PacketHandler
     public void onPlayerInfoUpdate(ServerPlayerInfoUpdatePacket e, MinecraftClient client) {
-        client.dispatchEvent(new PlayerListUpdatedEvent(e.getActions(), e.getItems()));
+        client.dispatchEvent(new PlayerListUpdatedEvent(e.getActions(), e.getItems(), client));
     }
 
     @PacketHandler
@@ -126,23 +128,23 @@ public class V767PacketReceiver extends PacketReceiver {
                 .map(u -> new PlayerInfoItem(u, new GameProfile(null, u, new ProfileProperties()), null, false, 0,
                         null))
                 .collect(Collectors.toList());
-        client.dispatchEvent(new PlayerListUpdatedEvent(actions, items));
+        client.dispatchEvent(new PlayerListUpdatedEvent(actions, items, client));
     }
 
     @PacketHandler
     public void onPlayerMessage(ServerPlayerChatMessagePacket e, MinecraftClient client) {
         client
                 .dispatchEvent(new ChatMessageEvent(new ChatComponent(e.getMessage()), e.getSender(), e.getSenderName(),
-                        e.getTargetName(), e.getChatType()));
+                        e.getTargetName(), e.getChatType(), client));
     }
 
     @PacketHandler
     public void onSystemChatMessage(ServerSystemChatMessagePacket e, MinecraftClient client) {
         ClientEvent event;
         if (e.isActionBar()) {
-            event = new ActionBarMessageEvent(e.getMessage());
+            event = new ActionBarMessageEvent(e.getMessage(), client);
         } else {
-            event = new ChatMessageEvent(e.getMessage());
+            event = new ChatMessageEvent(e.getMessage(), client);
         }
         client.dispatchEvent(event);
     }

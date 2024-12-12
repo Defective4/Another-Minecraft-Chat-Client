@@ -2,6 +2,7 @@ package io.github.defective4.minecraft.amcc.protocol.event.game;
 
 import java.util.UUID;
 
+import io.github.defective4.minecraft.amcc.protocol.MinecraftClient;
 import io.github.defective4.minecraft.amcc.protocol.event.ClientEvent;
 import io.github.defective4.minecraft.chatlib.chat.ChatComponent;
 
@@ -16,12 +17,13 @@ public class ChatMessageEvent extends ClientEvent {
     private final ChatComponent senderName, targetName;
     private final Source sourceType;
 
-    public ChatMessageEvent(ChatComponent message) {
-        this(message, Source.SYSTEM, null, null, null, -1);
+    public ChatMessageEvent(ChatComponent message, MinecraftClient client) {
+        this(message, Source.SYSTEM, null, null, null, -1, client);
     }
 
     public ChatMessageEvent(ChatComponent message, Source sourceType, UUID sender, ChatComponent senderName,
-            ChatComponent targetName, int registryIndex) {
+            ChatComponent targetName, int registryIndex, MinecraftClient client) {
+        super(client);
         this.message = message;
         this.targetName = targetName;
         this.sourceType = sourceType;
@@ -31,8 +33,8 @@ public class ChatMessageEvent extends ClientEvent {
     }
 
     public ChatMessageEvent(ChatComponent message, UUID sender, ChatComponent senderName, ChatComponent targetName,
-            int registryIndex) {
-        this(message, Source.PLAYER, sender, senderName, targetName, registryIndex);
+            int registryIndex, MinecraftClient client) {
+        this(message, Source.PLAYER, sender, senderName, targetName, registryIndex, client);
     }
 
     public ChatComponent getMessage() {
