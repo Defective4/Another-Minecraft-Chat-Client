@@ -99,16 +99,20 @@ public class CoreEventHandler implements ClientEventListener {
         if ("minecraft".equals(reg.getNamespace())) {
             switch (reg.getValue()) {
                 case "chat_type": {
+                    int index = 0;
                     for (Entry<Identifier, Tag> entry : e.getRegistryData().entrySet()) {
                         Identifier sub = entry.getKey();
-                        if (!"minecraft".equals(sub.getNamespace())) continue;
+                        if (!"minecraft".equals(sub.getNamespace())) {
+                            index++;
+                            continue;
+                        }
                         ChatType type;
                         try {
                             type = ChatType.valueOf(sub.getValue().toUpperCase());
                         } catch (Exception e2) {
                             type = null;
                         }
-                        if (type != null) Registries.CHAT.register(type, entry.getValue());
+                        if (type != null) Registries.CHAT.register(index, type);
                     }
                     break;
                 }
