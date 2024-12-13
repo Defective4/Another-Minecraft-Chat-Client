@@ -19,6 +19,7 @@ import io.github.defective4.minecraft.amcc.protocol.event.network.CompressionThr
 import io.github.defective4.minecraft.amcc.protocol.event.network.KeepAliveReceivedEvent;
 import io.github.defective4.minecraft.amcc.protocol.event.network.PluginMessageReceivedEvent;
 import io.github.defective4.minecraft.amcc.protocol.event.state.ConfigurationFinishEvent;
+import io.github.defective4.minecraft.amcc.protocol.event.state.ConfigurationRedoEvent;
 import io.github.defective4.minecraft.amcc.protocol.event.state.KickEvent;
 import io.github.defective4.minecraft.amcc.protocol.event.state.LoginSuccessEvent;
 import io.github.defective4.minecraft.amcc.protocol.registry.ChatType;
@@ -44,6 +45,11 @@ public class CoreEventHandler implements ClientEventListener {
     public void onConfigFinish(ConfigurationFinishEvent e) throws IOException {
         client.setCurrentGameState(GameState.PLAY);
         client.getExecutor().acknowledgeConfigFinish(client);
+    }
+
+    @EventHandler
+    public void onConfigRedo(ConfigurationRedoEvent e) {
+        client.setCurrentGameState(GameState.CONFIGURATION);
     }
 
     @EventHandler

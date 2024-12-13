@@ -23,6 +23,7 @@ import io.github.defective4.minecraft.amcc.protocol.event.network.CompressionThr
 import io.github.defective4.minecraft.amcc.protocol.event.network.KeepAliveReceivedEvent;
 import io.github.defective4.minecraft.amcc.protocol.event.network.PluginMessageReceivedEvent;
 import io.github.defective4.minecraft.amcc.protocol.event.state.ConfigurationFinishEvent;
+import io.github.defective4.minecraft.amcc.protocol.event.state.ConfigurationRedoEvent;
 import io.github.defective4.minecraft.amcc.protocol.event.state.GameJoinedEvent;
 import io.github.defective4.minecraft.amcc.protocol.event.state.KickEvent;
 import io.github.defective4.minecraft.amcc.protocol.event.state.LoginSuccessEvent;
@@ -63,6 +64,11 @@ public class V767PacketReceiver extends PacketReceiver {
     @PacketHandler
     public void onConfigRegistryData(ServerConfigRegistryDataPacket e, MinecraftClient client) {
         client.dispatchEvent(new RegistryDataReceivedEvent(e.getId(), e.getData(), client));
+    }
+
+    @PacketHandler
+    public void onConfigurationRedo(ServerRedoConfigurationPacket e, MinecraftClient client) {
+        client.dispatchEvent(new ConfigurationRedoEvent(client));
     }
 
     @PacketHandler
