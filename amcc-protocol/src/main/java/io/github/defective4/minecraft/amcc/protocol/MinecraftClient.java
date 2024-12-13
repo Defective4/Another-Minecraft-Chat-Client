@@ -32,12 +32,13 @@ import io.github.defective4.minecraft.amcc.protocol.packets.HandshakePacket;
 import io.github.defective4.minecraft.amcc.protocol.packets.ServerboundPacket;
 
 public class MinecraftClient implements AutoCloseable {
+    private String brand = "vanilla";
     private final PlayerProfile clientSideProfile;
     private int compressionThreshold = -1;
     private boolean connected;
     private GameState currentGameState = GameState.HANDSHAKE;
-    private final ProtocolExecutor executor;
 
+    private final ProtocolExecutor executor;
     private final String host;
     private DataInputStream in;
     private final Inflater inflater = new Inflater();
@@ -124,6 +125,10 @@ public class MinecraftClient implements AutoCloseable {
         listeners.forEach(ls -> ls.dispatchEvent(event));
     }
 
+    public String getBrand() {
+        return brand;
+    }
+
     public PlayerProfile getClientProfile() {
         return clientSideProfile;
     }
@@ -179,6 +184,14 @@ public class MinecraftClient implements AutoCloseable {
     public void sendPacket(ServerboundPacket packet) throws IOException {
         if (!isConnected()) throw new IOException("Client not connected");
         out.write(packet.getData(compressionThreshold));
+    }
+
+    public void sendPluginMessage(String channel, byte[] data) throws IOException {
+        protocol.getExecutor().sendPluginMessage(this, channel, data);
+    }
+
+    public void setBrand(String brand) {
+        this.brand = brand;
     }
 
     protected void addPlayer(PlayerInfoItem item) {

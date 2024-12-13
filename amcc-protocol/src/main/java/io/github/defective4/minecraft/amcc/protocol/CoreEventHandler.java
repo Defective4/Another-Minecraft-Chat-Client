@@ -1,6 +1,7 @@
 package io.github.defective4.minecraft.amcc.protocol;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map.Entry;
 
@@ -59,6 +60,11 @@ public class CoreEventHandler implements ClientEventListener {
         client.setCurrentGameState(GameState.CONFIGURATION);
         client.setServerSideProfile(e.getProfile());
         client.getExecutor().acknowledgeLogin(client);
+        byte[] brand = e.getClient().getBrand().getBytes(StandardCharsets.UTF_8);
+        byte[] data = new byte[brand.length + 1];
+        System.arraycopy(brand, 0, data, 1, brand.length);
+        data[0] = (byte) brand.length;
+        client.getExecutor().sendPluginMessage(client, "minecraft:brand", data);
     }
 
     @EventHandler

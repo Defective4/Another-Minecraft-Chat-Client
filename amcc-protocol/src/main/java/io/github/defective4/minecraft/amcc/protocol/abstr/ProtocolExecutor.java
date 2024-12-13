@@ -16,4 +16,6 @@ public interface ProtocolExecutor {
     void respondToKeepAlive(MinecraftClient client, long id) throws IOException;
 
     void sendChatMessage(MinecraftClient client, String message) throws IOException;
+
+    void sendPluginMessage(MinecraftClient client, String channel, byte[] data) throws IOException;
 }
