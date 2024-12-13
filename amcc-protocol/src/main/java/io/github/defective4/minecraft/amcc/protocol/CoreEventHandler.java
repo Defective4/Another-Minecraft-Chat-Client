@@ -17,6 +17,7 @@ import io.github.defective4.minecraft.amcc.protocol.event.game.PlayerListUpdated
 import io.github.defective4.minecraft.amcc.protocol.event.game.RegistryDataReceivedEvent;
 import io.github.defective4.minecraft.amcc.protocol.event.network.CompressionThresholdChangeEvent;
 import io.github.defective4.minecraft.amcc.protocol.event.network.KeepAliveReceivedEvent;
+import io.github.defective4.minecraft.amcc.protocol.event.network.PluginMessageReceivedEvent;
 import io.github.defective4.minecraft.amcc.protocol.event.state.ConfigurationFinishEvent;
 import io.github.defective4.minecraft.amcc.protocol.event.state.KickEvent;
 import io.github.defective4.minecraft.amcc.protocol.event.state.LoginSuccessEvent;
@@ -97,6 +98,11 @@ public class CoreEventHandler implements ClientEventListener {
                 client.addPlayer(new PlayerInfoItem(item.getUuid(), profile, gameMode, listed, ping, displayName));
             }
         }
+    }
+
+    @EventHandler
+    public void onPluginMessage(PluginMessageReceivedEvent e) throws IOException {
+        if ("minecraft:register".equals(e.getChannel())) client.sendPluginMessage(e.getChannel(), e.getData());
     }
 
     @EventHandler

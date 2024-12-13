@@ -11,20 +11,13 @@ import io.github.defective4.minecraft.amcc.protocol.v767.packets.server.config.S
 import io.github.defective4.minecraft.amcc.protocol.v767.packets.server.login.ServerLoginCompressionPacket;
 import io.github.defective4.minecraft.amcc.protocol.v767.packets.server.login.ServerLoginDisconnectPacket;
 import io.github.defective4.minecraft.amcc.protocol.v767.packets.server.login.ServerLoginSuccessPacket;
-import io.github.defective4.minecraft.amcc.protocol.v767.packets.server.play.ServerActionBarTextPacket;
-import io.github.defective4.minecraft.amcc.protocol.v767.packets.server.play.ServerDisconnectPacket;
-import io.github.defective4.minecraft.amcc.protocol.v767.packets.server.play.ServerDisguisedChatMessagePacket;
-import io.github.defective4.minecraft.amcc.protocol.v767.packets.server.play.ServerGameJoinPacket;
-import io.github.defective4.minecraft.amcc.protocol.v767.packets.server.play.ServerKeepAlivePacket;
-import io.github.defective4.minecraft.amcc.protocol.v767.packets.server.play.ServerPlayerChatMessagePacket;
-import io.github.defective4.minecraft.amcc.protocol.v767.packets.server.play.ServerPlayerInfoRemovePacket;
-import io.github.defective4.minecraft.amcc.protocol.v767.packets.server.play.ServerPlayerInfoUpdatePacket;
-import io.github.defective4.minecraft.amcc.protocol.v767.packets.server.play.ServerSystemChatMessagePacket;
+import io.github.defective4.minecraft.amcc.protocol.v767.packets.server.play.*;
 
 public class V767PacketRegistry extends PacketRegistry {
 
     @Override
     protected void initConfigPackets(Map<Integer, PacketFactory<?>> map) {
+        map.put(0x01, ServerPluginMessagePacket.FACTORY);
         map.put(0x02, ServerConfigDisconnectPacket.FACTORY);
         map.put(0x03, in -> new ServerConfigFinishPacket());
         map.put(0x07, ServerConfigRegistryDataPacket.FACTORY);
@@ -40,6 +33,7 @@ public class V767PacketRegistry extends PacketRegistry {
 
     @Override
     protected void initPlayPackets(Map<Integer, PacketFactory<?>> map) {
+        map.put(0x19, ServerPluginMessagePacket.FACTORY);
         map.put(0x1D, ServerDisconnectPacket.FACTORY);
         map.put(0x1E, ServerDisguisedChatMessagePacket.FACTORY);
         map.put(0x26, ServerKeepAlivePacket.FACTORY);

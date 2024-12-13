@@ -21,6 +21,7 @@ import io.github.defective4.minecraft.amcc.protocol.event.game.PlayerListUpdated
 import io.github.defective4.minecraft.amcc.protocol.event.game.RegistryDataReceivedEvent;
 import io.github.defective4.minecraft.amcc.protocol.event.network.CompressionThresholdChangeEvent;
 import io.github.defective4.minecraft.amcc.protocol.event.network.KeepAliveReceivedEvent;
+import io.github.defective4.minecraft.amcc.protocol.event.network.PluginMessageReceivedEvent;
 import io.github.defective4.minecraft.amcc.protocol.event.state.ConfigurationFinishEvent;
 import io.github.defective4.minecraft.amcc.protocol.event.state.GameJoinedEvent;
 import io.github.defective4.minecraft.amcc.protocol.event.state.KickEvent;
@@ -33,15 +34,7 @@ import io.github.defective4.minecraft.amcc.protocol.v767.packets.server.config.S
 import io.github.defective4.minecraft.amcc.protocol.v767.packets.server.login.ServerLoginCompressionPacket;
 import io.github.defective4.minecraft.amcc.protocol.v767.packets.server.login.ServerLoginDisconnectPacket;
 import io.github.defective4.minecraft.amcc.protocol.v767.packets.server.login.ServerLoginSuccessPacket;
-import io.github.defective4.minecraft.amcc.protocol.v767.packets.server.play.ServerActionBarTextPacket;
-import io.github.defective4.minecraft.amcc.protocol.v767.packets.server.play.ServerDisconnectPacket;
-import io.github.defective4.minecraft.amcc.protocol.v767.packets.server.play.ServerDisguisedChatMessagePacket;
-import io.github.defective4.minecraft.amcc.protocol.v767.packets.server.play.ServerGameJoinPacket;
-import io.github.defective4.minecraft.amcc.protocol.v767.packets.server.play.ServerKeepAlivePacket;
-import io.github.defective4.minecraft.amcc.protocol.v767.packets.server.play.ServerPlayerChatMessagePacket;
-import io.github.defective4.minecraft.amcc.protocol.v767.packets.server.play.ServerPlayerInfoRemovePacket;
-import io.github.defective4.minecraft.amcc.protocol.v767.packets.server.play.ServerPlayerInfoUpdatePacket;
-import io.github.defective4.minecraft.amcc.protocol.v767.packets.server.play.ServerSystemChatMessagePacket;
+import io.github.defective4.minecraft.amcc.protocol.v767.packets.server.play.*;
 import io.github.defective4.minecraft.chatlib.chat.ChatComponent;
 
 @SuppressWarnings("unused")
@@ -136,6 +129,11 @@ public class V767PacketReceiver extends PacketReceiver {
         client
                 .dispatchEvent(new ChatMessageEvent(new ChatComponent(e.getMessage()), e.getSender(), e.getSenderName(),
                         e.getTargetName(), e.getChatType(), client));
+    }
+
+    @PacketHandler
+    public void onPluginMessage(ServerPluginMessagePacket e, MinecraftClient client) {
+        client.dispatchEvent(new PluginMessageReceivedEvent(client, e.getChannel(), e.getData()));
     }
 
     @PacketHandler

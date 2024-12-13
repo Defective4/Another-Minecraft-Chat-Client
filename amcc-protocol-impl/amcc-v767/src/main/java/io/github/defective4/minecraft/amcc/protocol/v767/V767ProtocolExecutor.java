@@ -13,20 +13,9 @@ import io.github.defective4.minecraft.amcc.protocol.v767.packets.client.login.Cl
 import io.github.defective4.minecraft.amcc.protocol.v767.packets.client.play.ClientChatCommandPacket;
 import io.github.defective4.minecraft.amcc.protocol.v767.packets.client.play.ClientChatMessagePacket;
 import io.github.defective4.minecraft.amcc.protocol.v767.packets.client.play.ClientKeepAlivePacket;
+import io.github.defective4.minecraft.amcc.protocol.v767.packets.client.play.ClientPluginMessagePacket;
 
 public class V767ProtocolExecutor implements ProtocolExecutor {
-
-    @Override
-    public void sendPluginMessage(MinecraftClient client, String channel, byte[] data) throws IOException {
-        switch (client.getCurrentGameState()) {
-            case CONFIGURATION:
-                client.sendPacket(new ClientConfigPluginMessagePacket(channel, data));
-                break;
-            default:
-                throw new IllegalStateException(
-                        "Plugin messages can't be sent during the " + client.getCurrentGameState() + " state");
-        }
-    }
 
     @Override
     public void acknowledgeConfigFinish(MinecraftClient client) throws IOException {
@@ -54,6 +43,21 @@ public class V767ProtocolExecutor implements ProtocolExecutor {
             client.sendPacket(new ClientChatCommandPacket(message.substring(1)));
         } else {
             client.sendPacket(new ClientChatMessagePacket(message));
+        }
+    }
+
+    @Override
+    public void sendPluginMessage(MinecraftClient client, String channel, byte[] data) throws IOException {
+        switch (client.getCurrentGameState()) {
+            case CONFIGURATION:
+                client.sendPacket(new ClientConfigPluginMessagePacket(channel, data));
+                break;
+            case PLAY:
+                client.sendPacket(new ClientPluginMessagePacket(channel, data));
+                break;
+            default:
+                throw new IllegalStateException(
+                        "Plugin messages can't be sent during the " + client.getCurrentGameState() + " state");
         }
     }
 
