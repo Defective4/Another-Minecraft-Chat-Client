@@ -102,7 +102,14 @@ public class CoreEventHandler implements ClientEventListener {
 
     @EventHandler
     public void onPluginMessage(PluginMessageReceivedEvent e) throws IOException {
-        if ("minecraft:register".equals(e.getChannel())) client.sendPluginMessage(e.getChannel(), e.getData());
+        if ("minecraft:register".equals(e.getChannel())) {
+            client.sendPluginMessage(e.getChannel(), e.getData());
+            String[] channels = new String(e.getData(), StandardCharsets.UTF_8).split("\0");
+            for (String channel : channels) client.registerPluginChannel(channel);
+        } else if ("minecraft:unregister".equals(e.getChannel())) {
+            String[] channels = new String(e.getData(), StandardCharsets.UTF_8).split("\0");
+            for (String channel : channels) client.registerPluginChannel(channel);
+        }
     }
 
     @EventHandler

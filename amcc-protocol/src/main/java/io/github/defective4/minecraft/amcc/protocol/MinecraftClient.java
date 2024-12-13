@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -47,8 +48,9 @@ public class MinecraftClient implements AutoCloseable {
     private final Map<UUID, PlayerInfoItem> players = new HashMap<>();
     private final int port;
     private final ProtocolSet protocol;
-    private PlayerProfile serverSideProfile;
+    private final List<String> registeredPluginChannels = new ArrayList<>();
 
+    private PlayerProfile serverSideProfile;
     private final Socket socket = new Socket();
 
     public MinecraftClient(String host, int port, PlayerProfile profile, ProtocolSet protocol) {
@@ -157,6 +159,10 @@ public class MinecraftClient implements AutoCloseable {
         return Collections.unmodifiableCollection(players.values());
     }
 
+    public List<String> getRegisteredPluginChannels() {
+        return Collections.unmodifiableList(registeredPluginChannels);
+    }
+
     public PlayerProfile getServerProfile() {
         return serverSideProfile;
     }
@@ -202,6 +208,10 @@ public class MinecraftClient implements AutoCloseable {
         return executor;
     }
 
+    protected void registerPluginChannel(String channel) {
+        registeredPluginChannels.add(channel);
+    }
+
     protected void removePlayer(PlayerInfoItem item) {
         players.remove(item.getUuid());
     }
@@ -216,5 +226,9 @@ public class MinecraftClient implements AutoCloseable {
 
     protected void setServerSideProfile(PlayerProfile serverSideProfile) {
         this.serverSideProfile = serverSideProfile;
+    }
+
+    protected void unregisterPluginChannel(String channel) {
+        registeredPluginChannels.remove(channel);
     }
 }
