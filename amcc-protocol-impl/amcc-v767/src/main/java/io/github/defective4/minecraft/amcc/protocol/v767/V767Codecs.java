@@ -11,6 +11,9 @@ import java.util.Map;
 
 import io.github.defective4.minecraft.amcc.protocol.abstr.Codec;
 import io.github.defective4.minecraft.amcc.protocol.data.BlockPosition;
+import io.github.defective4.minecraft.amcc.protocol.data.ClientSettings;
+import io.github.defective4.minecraft.amcc.protocol.data.ClientSettings.ChatMode;
+import io.github.defective4.minecraft.amcc.protocol.data.DataTypes;
 import io.github.defective4.minecraft.amcc.protocol.data.PlayerInfoAction;
 
 public class V767Codecs {
@@ -26,6 +29,38 @@ public class V767Codecs {
         @Override
         public void write(DataOutput out, BlockPosition val) throws IOException {
             out.writeLong(0); // TODO
+        }
+    };
+
+    public static final Codec<ChatMode> CHAT_MODE = new Codec<ClientSettings.ChatMode>() {
+
+        @Override
+        public ChatMode read(DataInput in) throws IOException {
+            switch (DataTypes.readVarInt(in)) {
+                case 1:
+                    return ChatMode.COMMANDS_ONLY;
+                case 2:
+                    return ChatMode.DISABLED;
+                default:
+                case 0:
+                    return ChatMode.ENABLED;
+            }
+        }
+
+        @Override
+        public void write(DataOutput out, ChatMode val) throws IOException {
+            switch (val) {
+                case DISABLED:
+                    out.writeByte(2);
+                    break;
+                case COMMANDS_ONLY:
+                    out.writeByte(1);
+                    break;
+                default:
+                case ENABLED:
+                    out.writeByte(0);
+                    break;
+            }
         }
     };
 

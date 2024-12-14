@@ -18,4 +18,6 @@ public interface ProtocolExecutor {
     void sendChatMessage(MinecraftClient client, String message) throws IOException;
 
     void sendPluginMessage(MinecraftClient client, String channel, byte[] data) throws IOException;
+
+    void updateClientSettings(MinecraftClient client) throws IOException;
 }

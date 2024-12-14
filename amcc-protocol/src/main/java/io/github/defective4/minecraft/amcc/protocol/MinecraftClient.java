@@ -21,6 +21,7 @@ import java.util.zip.Inflater;
 import io.github.defective4.minecraft.amcc.protocol.abstr.PacketFactory;
 import io.github.defective4.minecraft.amcc.protocol.abstr.ProtocolExecutor;
 import io.github.defective4.minecraft.amcc.protocol.abstr.ProtocolSet;
+import io.github.defective4.minecraft.amcc.protocol.data.ClientSettings;
 import io.github.defective4.minecraft.amcc.protocol.data.DataTypes;
 import io.github.defective4.minecraft.amcc.protocol.data.GameProfile;
 import io.github.defective4.minecraft.amcc.protocol.data.GameState;
@@ -34,11 +35,12 @@ import io.github.defective4.minecraft.amcc.protocol.packets.ServerboundPacket;
 
 public class MinecraftClient implements AutoCloseable {
     private String brand = "vanilla";
+    private final ClientSettings clientSettings = new ClientSettings();
     private final PlayerProfile clientSideProfile;
     private int compressionThreshold = -1;
     private boolean connected;
-    private GameState currentGameState = GameState.HANDSHAKE;
 
+    private GameState currentGameState = GameState.HANDSHAKE;
     private final ProtocolExecutor executor;
     private final String host;
     private DataInputStream in;
@@ -135,6 +137,10 @@ public class MinecraftClient implements AutoCloseable {
         return clientSideProfile;
     }
 
+    public ClientSettings getClientSettings() {
+        return clientSettings;
+    }
+
     public int getCompressionThreshold() {
         return compressionThreshold;
     }
@@ -198,6 +204,10 @@ public class MinecraftClient implements AutoCloseable {
 
     public void setBrand(String brand) {
         this.brand = brand;
+    }
+
+    public void updateClientSettings() throws IOException {
+        protocol.getExecutor().updateClientSettings(this);
     }
 
     protected void addPlayer(PlayerInfoItem item) {

@@ -72,6 +72,7 @@ public class CoreEventHandler implements ClientEventListener {
         System.arraycopy(brand, 0, data, 1, brand.length);
         data[0] = (byte) brand.length;
         client.getExecutor().sendPluginMessage(client, "minecraft:brand", data);
+        client.updateClientSettings();
     }
 
     @EventHandler

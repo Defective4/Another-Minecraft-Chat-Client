@@ -8,12 +8,14 @@ import io.github.defective4.minecraft.amcc.protocol.data.PlayerProfile;
 import io.github.defective4.minecraft.amcc.protocol.packets.ServerboundPacket;
 import io.github.defective4.minecraft.amcc.protocol.v767.packets.client.config.ClientConfigFinishAckPacket;
 import io.github.defective4.minecraft.amcc.protocol.v767.packets.client.config.ClientConfigPluginMessagePacket;
+import io.github.defective4.minecraft.amcc.protocol.v767.packets.client.config.ClientConfigSettingsPacket;
 import io.github.defective4.minecraft.amcc.protocol.v767.packets.client.login.ClientLoginAcknowledgedPacket;
 import io.github.defective4.minecraft.amcc.protocol.v767.packets.client.login.ClientLoginStartPacket;
 import io.github.defective4.minecraft.amcc.protocol.v767.packets.client.play.ClientChatCommandPacket;
 import io.github.defective4.minecraft.amcc.protocol.v767.packets.client.play.ClientChatMessagePacket;
 import io.github.defective4.minecraft.amcc.protocol.v767.packets.client.play.ClientKeepAlivePacket;
 import io.github.defective4.minecraft.amcc.protocol.v767.packets.client.play.ClientPluginMessagePacket;
+import io.github.defective4.minecraft.amcc.protocol.v767.packets.client.play.ClientSettingsPacket;
 
 public class V767ProtocolExecutor implements ProtocolExecutor {
 
@@ -58,6 +60,23 @@ public class V767ProtocolExecutor implements ProtocolExecutor {
             default:
                 throw new IllegalStateException(
                         "Plugin messages can't be sent during the " + client.getCurrentGameState() + " state");
+        }
+    }
+
+    @Override
+    public void updateClientSettings(MinecraftClient client) throws IOException {
+        switch (client.getCurrentGameState()) {
+            case CONFIGURATION: {
+                client.sendPacket(new ClientConfigSettingsPacket(client.getClientSettings()));
+                break;
+            }
+            case PLAY: {
+                client.sendPacket(new ClientSettingsPacket(client.getClientSettings()));
+                break;
+            }
+            default:
+                throw new IllegalStateException(
+                        "Client settings can't be updated during " + client.getCurrentGameState() + " state");
         }
     }
 
