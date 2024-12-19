@@ -19,6 +19,7 @@ import io.github.defective4.minecraft.amcc.protocol.event.game.ChatMessageEvent;
 import io.github.defective4.minecraft.amcc.protocol.event.game.ChatMessageEvent.Source;
 import io.github.defective4.minecraft.amcc.protocol.event.game.PlayerListUpdatedEvent;
 import io.github.defective4.minecraft.amcc.protocol.event.game.RegistryDataReceivedEvent;
+import io.github.defective4.minecraft.amcc.protocol.event.game.TimeUpdatedEvent;
 import io.github.defective4.minecraft.amcc.protocol.event.network.CompressionThresholdChangeEvent;
 import io.github.defective4.minecraft.amcc.protocol.event.network.KeepAliveReceivedEvent;
 import io.github.defective4.minecraft.amcc.protocol.event.network.PluginMessageReceivedEvent;
@@ -151,5 +152,10 @@ public class V767PacketReceiver extends PacketReceiver {
             event = new ChatMessageEvent(e.getMessage(), client);
         }
         client.dispatchEvent(event);
+    }
+
+    @PacketHandler
+    public void onTimePacket(ServerTimeUpdatePacket e, MinecraftClient client) {
+        client.dispatchEvent(new TimeUpdatedEvent(client, e.getWorldAge(), e.getTime()));
     }
 }

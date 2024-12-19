@@ -15,6 +15,7 @@ import io.github.defective4.minecraft.amcc.protocol.event.ClientEventListener;
 import io.github.defective4.minecraft.amcc.protocol.event.EventHandler;
 import io.github.defective4.minecraft.amcc.protocol.event.game.PlayerListUpdatedEvent;
 import io.github.defective4.minecraft.amcc.protocol.event.game.RegistryDataReceivedEvent;
+import io.github.defective4.minecraft.amcc.protocol.event.game.TimeUpdatedEvent;
 import io.github.defective4.minecraft.amcc.protocol.event.network.CompressionThresholdChangeEvent;
 import io.github.defective4.minecraft.amcc.protocol.event.network.KeepAliveReceivedEvent;
 import io.github.defective4.minecraft.amcc.protocol.event.network.PluginMessageReceivedEvent;
@@ -146,5 +147,11 @@ public class CoreEventHandler implements ClientEventListener {
                     break;
             }
         }
+    }
+
+    @EventHandler
+    public void onTimeUpdate(TimeUpdatedEvent e) {
+        client.setTime(e.getTimeOfDay());
+        client.setWorldAge(e.getWorldAge());
     }
 }

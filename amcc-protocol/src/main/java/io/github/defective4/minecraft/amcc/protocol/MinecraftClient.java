@@ -51,9 +51,12 @@ public class MinecraftClient implements AutoCloseable {
     private final int port;
     private final ProtocolSet protocol;
     private final List<String> registeredPluginChannels = new ArrayList<>();
-
     private PlayerProfile serverSideProfile;
     private final Socket socket = new Socket();
+
+    private long time = 0;
+
+    private long worldAge = -1;
 
     public MinecraftClient(String host, int port, PlayerProfile profile, ProtocolSet protocol) {
         listeners.add(new CoreEventHandler(this));
@@ -149,6 +152,16 @@ public class MinecraftClient implements AutoCloseable {
         return currentGameState;
     }
 
+    public String getFormattedTime() {
+        long relativeTime = Math.abs(getTime()) + 6000;
+        if (relativeTime >= 24000) relativeTime = relativeTime - 24000;
+        String hours = Integer.toString((int) (relativeTime / 1000));
+        String minutes = Integer.toString((int) (relativeTime / 20 % 60));
+        if (hours.length() == 1) hours = "0" + hours;
+        if (minutes.length() == 1) minutes = "0" + minutes;
+        return hours + ":" + minutes;
+    }
+
     public List<ClientEventListener> getListeners() {
         return Collections.unmodifiableList(listeners);
     }
@@ -175,6 +188,14 @@ public class MinecraftClient implements AutoCloseable {
 
     public PlayerProfile getServerSideProfile() {
         return serverSideProfile;
+    }
+
+    public long getTime() {
+        return time;
+    }
+
+    public long getWorldAge() {
+        return worldAge;
     }
 
     public boolean isClosed() {
@@ -236,6 +257,14 @@ public class MinecraftClient implements AutoCloseable {
 
     protected void setServerSideProfile(PlayerProfile serverSideProfile) {
         this.serverSideProfile = serverSideProfile;
+    }
+
+    protected void setTime(long time) {
+        this.time = time;
+    }
+
+    protected void setWorldAge(long worldAge) {
+        this.worldAge = worldAge;
     }
 
     protected void unregisterPluginChannel(String channel) {

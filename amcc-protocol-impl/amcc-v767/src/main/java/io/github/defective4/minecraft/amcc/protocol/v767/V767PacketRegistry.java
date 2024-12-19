@@ -42,6 +42,7 @@ public class V767PacketRegistry extends PacketRegistry {
         map.put(0x3D, ServerPlayerInfoRemovePacket.FACTORY);
         map.put(0x3E, ServerPlayerInfoUpdatePacket.FACTORY);
         map.put(0x4C, ServerActionBarTextPacket.FACTORY);
+        map.put(0x64, ServerTimeUpdatePacket.FACTORY);
         map.put(0x69, in -> new ServerRedoConfigurationPacket());
         map.put(0x6C, ServerSystemChatMessagePacket.FACTORY);
     }
